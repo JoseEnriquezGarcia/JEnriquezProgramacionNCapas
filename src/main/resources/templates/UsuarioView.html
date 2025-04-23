@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate = ~{layout}>
+<head>
+    <title>Informacion del Perfil</title>
+</head>
+<body layout:fragment = "body" style="background-color: #384052;">
+    <div class="container">
+        <div class="row">
+            <h2 style="color:white;">Informacion del perfil</h2>
+        </div>
+        <div class="row">
+            <div class="card " style="width:400px; background-color: #626266">
+                <center>
+                <img class="card-img-top mb-3" th:src="${listaUsuario.Usuario.Imagen != null} ? 'data:image/png;base64,' + ${listaUsuario.Usuario.Imagen} : 'https://i.postimg.cc/7YH05GSc/Default-Image.png'"  alt="Imagen del perfil" style="width:280px; height:280px">
+                <a th:href="@{/usuario/FormView(IdUsuario = ${listaUsuario.Usuario.IdUsuario}, IdDireccion = -1)}" class="btn btn-primary mb-3 col-5">Editar Usuario</a>
+                <a th:href="@{/usuario}" class="btn btn-primary mb-3 col-5">Regresar</a>
+                </center>
+            </div>
+            
+            <div class="card col-8" style="background-color: #626266"> 
+                <p th:utext="'<strong>Nombre Completo: </strong>' + |${listaUsuario.Usuario.Nombre} ${listaUsuario.Usuario.ApellidoPaterno} ${listaUsuario.Usuario.ApellidoMaterno}|"></p>
+                <p th:utext="'<strong>Username: </strong>' + ${listaUsuario.Usuario.UserName}">Username</p>
+                <p th:utext="'<strong>Email: </strong>' + ${listaUsuario.Usuario.Email}">Email</p>
+                <p th:utext="'<strong>Fecha de Nacimiento: </strong>' + ${listaUsuario.Usuario.FechaNacimiento}">Fecha</p>
+                <p th:utext="'<strong>Telefono: </strong>' + ${listaUsuario.Usuario.Telefono}">Telefono</p>
+                <p th:utext="'<strong>Celular: </strong>' + ${listaUsuario.Usuario.Celular}">Celular</p>
+                <p th:utext="'<strong>CURP: </strong>' + ${listaUsuario.Usuario.CURP}">CURP</p>
+                <p th:utext="'<strong>Rol: </strong>' + ${listaUsuario.Usuario.Rol.Nombre}">Rol</p>
+            </div>
+        </div>
+        <br>
+        <h2 style="color:white;">Direccion</h2>
+        <a th:href="@{/usuario/FormView(IdUsuario = ${listaUsuario.Usuario.IdUsuario}, IdDireccion = 0)}" class="btn btn-primary mb-3">Agregar direccion</a>
+        <table class="table table-dark table-bordered table-sm">
+            <thead>
+                <tr>
+                    <th>Calle</th>
+                    <th>Num.Int</th>
+                    <th>Num.Ext</th>
+                    <th>Colonia</th>
+                    <th>C.P</th>
+                    <th>Municipio</th>
+                    <th>Estado</th>
+                    <th>Pais</th>
+                    <th>Editar</th>
+                    <th>Eliminar</th>
+                </tr>
+                
+                <tr th:each="direcciones : ${listaUsuario.Direcciones}">
+                    <td th:text="${direcciones.Calle}"></td>
+                    <td th:text="${direcciones.NumeroInterior}"></td>
+                    <td th:text="${direcciones.NumeroExterior}"></td>
+                    <td th:text="${direcciones.Colonia.Nombre}"></td>
+                    <td th:text="${direcciones.Colonia.CodigoPostal}"></td>
+                    <td th:text="${direcciones.Colonia.Municipio.Nombre}"></td>
+                    <td th:text="${direcciones.Colonia.Municipio.Estado.Nombre}"></td>
+                    <td th:text="${direcciones.Colonia.Municipio.Estado.Pais.Nombre}"></td>
+                    <td scope="row"><div class="d-grid gap-2"><a class="btn btn-secondary" th:href="@{/usuario/FormView(IdUsuario = ${listaUsuario.Usuario.IdUsuario}, IdDireccion = ${direcciones.IdDireccion})}"><i class="bi bi-pencil"></i></a></div></td>
+                    <td scope="row"><div class="d-grid gap-2"><a class="btn btn-danger" th:href="@{/usuario/DeleteDireccion(IdDireccion = ${direcciones.IdDireccion})}"><i class="bi bi-trash3"></i></a></div></td>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</body>
+</html>

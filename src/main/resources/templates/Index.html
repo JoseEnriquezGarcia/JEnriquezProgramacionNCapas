@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate = ~{layout}>
+    <head>
+        <title>UsuarioIndex</title>
+    </head>
+    <body layout:fragment = "body" style="background-color: #384052;">
+        <div class="container mt-3 col-sm-12 p-5">
+            <div class="row" style="">
+                <div class="col mt-3" style="margin-bottom: 10px;
+                     margin-left: 0px">
+                    <form th:action="@{/usuario/GetAllDinamico}" method="post" id="searchBar" class="form my-2 mb-3 g-2 my-lg-0" th:object="${usuarioBusqueda}">
+                        <div class="row mb-1 g-2">
+                            <div class="col-2">
+                                <a class="btn btn-primary" style="margin-left: 94px" th:href="@{/usuario/Form/0}"><i class="bi bi-plus-lg"></i> Agregar</a>
+                            </div>
+                            <div class="col-2">
+                                <input class="form-control" id="Nombre" type="search" placeholder="Nombre" th:field="*{Nombre}" aria-label="Search">
+                            </div>
+                            <div class="col-2">
+                                <input class="form-control mr-sm-2" id="ApellidoPaterno" type="search" placeholder="Apellido Paterno" th:field="*{ApellidoPaterno}" aria-label="Search">
+                            </div>
+                            <div class="col-2">
+                                <input class="form-control input-group" id="ApellidoMaterno" type="search" placeholder="Apellido Materno" th:field="*{ApellidoMaterno}" aria-label="Search">
+                            </div>
+                            <div class="col-2">
+                                <select class="form-select" id="Rol" aria-label="Floating label select example" th:field="*{Rol.IdRol}">
+                                    <option value="0" selected>Selecciona el Rol</option>
+                                    <option th:each="rol : ${listaRol}" th:value="${rol.IdRol}" th:text="${rol.Nombre}"></option>
+                                </select>
+                            </div>
+                            <div class="col-2">
+                                <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="table-responsive-xl">
+                <br>
+                <table class="table table-dark table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th class="col-1">Imagen</th>
+                            <th class = "col-2">Nombre</th>
+                            <th class = "col-1">Username</th>
+                            <th class = "col-2">Contacto</th>
+                            <th class = "col-1">Curp</th>
+                            <th class = "col-3">Direccion</th>
+                            <th class="col">Status</th>
+                            <th class = "col">Editar</th>
+                            <th class = "col">Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="usuarioDirecciones : ${listaUsuarios}">
+                            <td><div class="card " style="width:80px; background-color: #626266"><img th:src="${usuarioDirecciones.Usuario.Imagen != null} ? 'data:image/png;base64,' + ${usuarioDirecciones.Usuario.Imagen} : 'https://i.postimg.cc/7YH05GSc/Default-Image.png'" ></div></td>
+                            <td th:text="${usuarioDirecciones.Usuario.Nombre + ' ' + usuarioDirecciones.Usuario.ApellidoPaterno + ' ' + usuarioDirecciones.Usuario.ApellidoMaterno}" scope="row"></td>
+                            <td th:text="${usuarioDirecciones.Usuario.UserName}" scope="row"></td>
+                            <td th:text="${'Telefono' +': ' + usuarioDirecciones.Usuario.Telefono + ' ' + 'Celular' +': '+ usuarioDirecciones.Usuario.Celular}" scope="row"></td>
+                            <td th:text="${usuarioDirecciones.Usuario.CURP}"></td>
+                            <td scope="row"><ul th:each="direccion : ${usuarioDirecciones.Direcciones}" th:utext="|${direccion.Calle ?: 'No hay datos por mostrar'} ${direccion.NumeroExterior ?: ''} ${direccion.NumeroInterior ?: ''} ${direccion.Colonia.Nombre ?: ''}|?: 'Sin datos'"></ul></td>
+                            <td><div class="form-check form-switch"><input th:data-id="${usuarioDirecciones.Usuario.IdUsuario}" class="form-check-input" th:value="${usuarioDirecciones.Usuario.Status}" type="checkbox" role="switch" th:checked="${usuarioDirecciones.Usuario.Status == 1}" onchange="UpdateStatus(this)"></div></td>
+                            <td scope="row"><div class="d-grid gap-2"><a class="btn btn-secondary" th:href="@{/usuario/Form/{IdUsuario}(IdUsuario = ${usuarioDirecciones.Usuario.IdUsuario})}"><i class="bi bi-pencil"></i></a></div></td>
+                            <td scope="row"><div class="d-grid gap-2"><a class="btn btn-danger" th:href="@{/usuario/DeleteUsuario(IdUsuario = ${usuarioDirecciones.Usuario.IdUsuario})}"><i class="bi bi-trash3"></i></a></div></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <script>
+            function UpdateStatus(element) {
+                let isChecked = $(element).is(":checked");
+                let valorOriginal = $(element).val();
+                let data = $(element).data("id");
+                let nuevoValor = isChecked ? 1 : 0;
+
+                $.ajax({
+                    type: "GET",
+                    url: "/usuario/UpdateStatus/" + data + "/" + nuevoValor,
+                    success: function () {
+                        alert("Actualizado");
+                        $(element).val(nuevoValor);
+                    },
+                    error: function () {
+                        alert("Error al actualizar");
+                        if (valorOriginal == 0) {
+                            $(element).prop("checked", false);
+                        } else {
+                            $(element).prop("checked", true);
+                        }
+                        $(element).val(valorOriginal);
+                    }
+                });
+            }
+
+        </script>
+    </body>
+</html>
