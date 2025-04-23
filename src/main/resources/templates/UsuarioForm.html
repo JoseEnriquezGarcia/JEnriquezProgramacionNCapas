@@ -7,190 +7,192 @@
     </head>
 </head>
 <body layout:fragment="body" style="background-color: #384052;">
-    <div class="conatiner-sm mt-3">
-        <h1 class="text-center" style="color:white;">Registro</h1>
-        <div class=" p-5" style="background-color: #626266">
+    <div class="conatiner-sm mt-2">
+        <div class="row">
+            <div class="col-8" style="margin-left: 285px;">
+                <h1 class="text-center" style="color:white;">Registro</h1>
+                <div class=" p-5" style="background-color: #626266; border-radius: 10px; margin-bottom: 10px">
+                    <form th:action="@{/usuario/Form}" method="POST" th:object="${usuarioDireccion}" enctype="multipart/form-data">
+                        <input type="hidden" th:field="*{Usuario.IdUsuario}">
+                        <input type="hidden" th:field="*{Direccion.IdDireccion}">
 
-
-            <form th:action="@{/usuario/Form}" method="POST" th:object="${usuarioDireccion}" enctype="multipart/form-data">
-                <input type="hidden" th:field="*{Usuario.IdUsuario}">
-                <input type="hidden" th:field="*{Direccion.IdDireccion}">
-
-                <div th:if="*{(Usuario.IdUsuario > 0 && Direccion.IdDireccion == -1) 
-                     || (Usuario.IdUsuario == 0 && Direccion.IdDireccion == 0)}">
-                    <div class="row mb-3 g-2">
-                        <div class="card" style="width:200px;
-                             margin-left: 620px">
-                            <div class="card-body">
-                                <img class="card-img-top" id="output" src="https://i.postimg.cc/7YH05GSc/Default-Image.png" alt="Card image">
+                        <div th:if="*{(Usuario.IdUsuario > 0 && Direccion.IdDireccion == -1) 
+                             || (Usuario.IdUsuario == 0 && Direccion.IdDireccion == 0)}">
+                            <div class="row mb-3 g-2">
+                                <div class="card" style="width:200px;
+                                     margin-left: 360px">
+                                    <div class="card-body">
+                                        <img class="card-img-top" id="output" src="https://i.postimg.cc/7YH05GSc/Default-Image.png" alt="Card image">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col" style="">
+                                <div class="mb-3 g-3">
+                                    <label for="imagenFile" class="form-label" style="color: white;">Fotografia</label>
+                                    <input type="file" class="form-control" id="imagenFile" name="imagenFile" accept="image/*" onChange="validarFile(event, this)">
+                                </div>
+                            </div>
+                            <div class="row mb-3 g-2">
+                                <div class="form-floating col">
+                                    <input type="text" class="form-control" id="UserName" placeholder="Username" th:field="*{Usuario.UserName}" required>
+                                    <label for="UserName" class="form-label">Username</label>
+                                    <span id="EmailError" class="text-danger" th:if="${#fields.hasErrors('Usuario.UserName')}" th:errors="*{Usuario.UserName}"></span>
+                                </div>
+                                <div class="form-floating col">
+                                    <input type="text" class="form-control" id="Email" placeholder="Email" th:field="*{Usuario.Email}" onChange="return emailValidacion(this)">
+                                    <label for="Email">Email</label>
+                                    <span th:if="${#fields.hasErrors('Usuario.Email')}" th:errors="*{Usuario.Email}"></span>
+                                    <span id="EmailError" class="text-danger"></span>
+                                </div>
+                                <div class="form-floating col">
+                                    <input type="text" class="form-control" id="Password" placeholder="Password" th:field="*{Usuario.Password}" onblur="return passwordValidation(this)" required>
+                                    <label for="Password" class="form-label">Password</label>
+                                    <span th:if="${#fields.hasErrors('Usuario.Password')}" th:errors="*{Usuario.Password}"></span>
+                                    <span id="PasswordError" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-3 g-2">
+                                <div class="form-floating col">
+                                    <input type="text" class="form-control" id="Nombre" placeholder="Nombre"  th:field="*{Usuario.Nombre}" required onkeypress="return onlyWords(event, this)">
+                                    <label for="Nombre" class="form-label">Nombre</label>
+                                    <span th:if="${#fields.hasErrors('Usuario.Nombre')}" th:errors="*{Usuario.Nombre}"></span>
+                                    <span id="NombreError" class="text-danger"></span>
+                                </div>
+                                <div class="form-floating col">
+                                    <input type="text" class="form-control" id="ApellidoPaterno" placeholder="Apellido Paterno" th:field="*{Usuario.ApellidoPaterno}" required onkeypress="return onlyWords(event, this)">
+                                    <label for="ApellidoPaterno" class="form-label">Apellido Paterno</label>
+                                    <span th:if="${#fields.hasErrors('Usuario.ApellidoPaterno')}" th:errors="*{Usuario.ApellidoPaterno}"></span>
+                                    <span id="ApellidoPaternoError" class="text-danger"></span>
+                                </div>
+                                <div class="form-floating col">
+                                    <input type="text" class="form-control" id="ApellidoMaterno" placeholder="Apellido Materno" th:field="*{Usuario.ApellidoMaterno}" required onkeypress="return onlyWords(event, this)">
+                                    <label for="ApellidoMaterno" class="form-label">Apellido Materno</label>
+                                    <span th:if="${#fields.hasErrors('Usuario.ApellidoMaterno')}" th:errors="*{Usuario.ApellidoMaterno}"></span>
+                                    <span id="ApellidoMaternoError" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-2 g-2">
+                                <div class="form-floating col">
+                                    <input type="date" class="form-control" id="FechaNacimiento" placeholder="Fecha Nacimiento" required max="2025-12-31" th:field="*{Usuario.FechaNacimiento}">
+                                    <label for="FechaNacimiento">Fecha De Nacimiento</label>
+                                    <span th:if="${#fields.hasErrors('Usuario.FechaNacimiento')}" th:errors="*{Usuario.FechaNacimiento}"></span>
+                                </div>
+                                <div class="form-floating col">
+                                    <input type="text" class="form-control" id="Curp" placeholder="Curp" th:field="*{Usuario.CURP}" onblur="return curpValidation(event, this)">
+                                    <label for="Curp" class="form-label">Curp</label>
+                                    <span id="CurpError" class="text-danger"></span>
+                                    <span th:if="${#fields.hasErrors('Usuario.CURP')}" th:errors="*{Usuario.CURP}"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-3 g-2">
+                                <label for="formFile" class="form-label mb-1" style="color: white;">Selecciona el sexo</label>
+                                <div class="form-check col-2">
+                                    <input class="form-check-input" type="radio" name="sexo" id="sexo" value="M" th:field="*{Usuario.Sexo}">
+                                    <label class="form-check-label" for="radioDefault1" style="color:white;">
+                                        Masculino
+                                    </label>
+                                </div>
+                                <div class="form-check col-2">
+                                    <input class="form-check-input" type="radio" name="sexo" id="sexo" value="F" th:field="*{Usuario.Sexo}">
+                                    <label class="form-check-label" for="radioDefault2" style="color:white;">
+                                        Femenino
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row mb-1 g-2">
+                                <div class="form-floating col">
+                                    <input type="tel" class="form-control" id="Telefono" placeholder="Telefono" th:field="*{Usuario.Telefono}" onblur="return phoneValidation(event, this)">
+                                    <label for="Telefono">Numero de telefono</label>
+                                    <span id="TelefonoError" class="text-danger"></span>
+                                    <span th:if="${#fields.hasErrors('Usuario.Telefono')}" th:errors="*{Usuario.Telefono}"></span>
+                                </div>
+                                <div class="form-floating col">
+                                    <input type="tel" class="form-control" id="Celular" placeholder="Celular" th:field="*{Usuario.Celular}" onblur="return phoneValidation(event, this)">
+                                    <label for="Celular" class="form-label">Celular</label>
+                                    <span id="CelularError" class="text-danger"></span>
+                                    <span th:if="${#fields.hasErrors('Usuario.Celular')}" th:errors="*{Usuario.Celular}"></span>
+                                </div>
+                                <div class="form-floating col">
+                                    <select class="form-select" id="Rol" aria-label="Floating label select example" th:field="*{Usuario.Rol.IdRol}" onChange="rolValidation(event, this)">
+                                        <option value="0" selected>Selecciona el Rol</option>
+                                        <option th:each="rol : ${listaRol}" th:value="${rol.IdRol}" th:text="${rol.Nombre}"></option>
+                                    </select>
+                                    <label for="Rol">Rol</label>
+                                    <span id="RolError" class="text-danger"></span>
+                                    <span th:if="${#fields.hasErrors('Usuario.Rol.IdRol')}" th:errors="*{Usuario.Rol.IdRol}"></span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col" style="">
-                        <div class="mb-3 g-3">
-                            <label for="imagenFile" class="form-label" style="color: white;">Fotografia</label>
-                            <input type="file" class="form-control" id="imagenFile" name="imagenFile" accept="image/*" onChange="validarFile(event, this)">
+                        <div th:if="*{(Usuario.IdUsuario > 0 && Direccion.IdDireccion == 0) 
+                             || (Usuario.IdUsuario > 0 && Direccion.IdDireccion > 0)
+                             || (Usuario.IdUsuario == 0 && Direccion.IdDireccion == 0)}">
+                            <div class="row mb-3 g-2">
+                                <label for="formFile" class="form-label mb-1" style="color: white;">Direccion</label>
+                                <div class="form-floating col">
+                                    <select class="form-select" id="Pais" aria-label="Floating label select example" th:field="*{Direccion.Colonia.Municipio.Estado.Pais.IdPais}" onChange="rolValidation(event, this)">
+                                        <option value="0">Selecciona el Pais</option>
+                                        <option th:each="paises : ${listaPais}" th:value="${paises.IdPais}" th:text="${paises.Nombre}"></option>
+                                    </select>
+                                    <label for="Pais">Pais</label>
+                                    <span id="PaisError" class="text-danger"></span>
+                                    <span th:if="${#fields.hasErrors('Direccion.Colonia.Municipio.Estado.Pais.IdPais')}" th:errors="*{Direccion.Colonia.Municipio.Estado.IdEstado}"></span>
+                                </div>
+                                <div class="form-floating col">
+                                    <select class="form-select" id="Estado" aria-label="Floating label select example" th:field="*{Direccion.Colonia.Municipio.Estado.IdEstado}" onChange="rolValidation(event, this)">
+                                        <option value="0">Selecciona el Estado</option>
+                                        <option th:each="estados : ${listaEstados}" th:value="${estados.IdEstado}" th:text="${estados.Nombre}"></option>
+                                    </select>
+                                    <label for="Estado">Estado</label>
+                                    <span id="EstadoError" class="text-danger"></span>
+                                    <span th:if="${#fields.hasErrors('Direccion.Colonia.Municipio.IdMunicipio')}" th:errors="*{Direccion.Colonia.Municipio.IdMunicipio}"></span>
+                                </div>
+                                <div class="form-floating col">
+                                    <select class="form-select" id="Municipio" aria-label="Floating label select example" th:field="*{Direccion.Colonia.Municipio.IdMunicipio}" onChange="rolValidation(event, this)">
+                                        <option value="0">Selecciona el Municipio</option>
+                                        <option th:each="municipios : ${listaMunicipio}" th:value="${municipios.IdMunicipio}" th:text="${municipios.Nombre}"></option>
+                                    </select>
+                                    <label for="Municipio">Municipio</label>
+                                    <span id="MunicipioError" class="text-danger"></span>
+                                    <span th:if="${#fields.hasErrors('Direccion.Colonia.Municipio.IdMunicipio')}" th:errors="*{Direccion.Colonia.Municipio.IdMunicipio}"></span>
+                                </div>
+                                <div class="form-floating col">
+                                    <select class="form-select" id="Colonia" aria-label="Floating label select example" th:field="*{Direccion.Colonia.IdColonia}" onChange="rolValidation(event, this)">
+                                        <option value="0">Selecciona la Colonia</option>
+                                        <option th:each="colonias : ${listaColonia}" th:value="${colonias.IdColonia}" th:text="${colonias.Nombre}"></option>
+                                    </select>
+                                    <label for="Colonia">Colonia</label>
+                                    <span id="ColoniaError" class="text-danger"></span>
+                                    <span th:if="${#fields.hasErrors('Direccion.Colonia.IdColonia')}" th:errors="*{Direccion.Colonia.IdColonia}"></span>
+                                </div>
+                            </div>
+                            <div class="row mb-3 g-2">
+                                <div class="form-floating col">
+                                    <input type="text" class="form-control" id="Calle" placeholder="Calle" th:field="*{Direccion.Calle}">
+                                    <label for="Direccion">Calle</label>
+                                    <span th:if="${#fields.hasErrors('Direccion.Calle')}" th:errors="*{Direccion.Calle}"></span>
+                                </div>
+                                <div class="form-floating col">
+                                    <input type="text" class="form-control" id="NumeroInterior" placeholder="Num.Int" th:field="*{Direccion.NumeroInterior}">
+                                    <label for="Direccion">Num.Int</label>
+                                    <span th:if="${#fields.hasErrors('Direccion.NumeroInterior')}" th:errors="*{Direccion.NumeroInterior}"></span>
+                                </div>
+                                <div class="form-floating col">
+                                    <input type="text" class="form-control" id="NumeroExterior" placeholder="Num.Ext" th:field="*{Direccion.NumeroExterior}">
+                                    <label for="Direccion">Num.Ext</label>
+                                    <span th:if="${#fields.hasErrors('Direccion.NumeroExterior')}" th:errors="*{Direccion.NumeroExterior}"></span>
+                                </div>
+                                <div class="form-floating col">
+                                    <input class="form-control" id="CodigoPostal" type="text" placeholder="CodigoPostal" th:field="*{Direccion.Colonia.CodigoPostal}">
+                                    <label for="CodigoPostal">CodigoPostal</label>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row mb-3 g-2">
-                        <div class="form-floating col">
-                            <input type="text" class="form-control" id="UserName" placeholder="Username" th:field="*{Usuario.UserName}" required>
-                            <label for="UserName" class="form-label">Username</label>
-                            <span id="EmailError" class="text-danger" th:if="${#fields.hasErrors('Usuario.UserName')}" th:errors="*{Usuario.UserName}"></span>
+                        <div class="row">
+                            <button id="btnAgregar" type="submit" class="btn btn-primary col-12" >Enviar</button>
                         </div>
-                        <div class="form-floating col">
-                            <input type="text" class="form-control" id="Email" placeholder="Email" th:field="*{Usuario.Email}" onChange="return emailValidacion(this)">
-                            <label for="Email">Email</label>
-                            <span th:if="${#fields.hasErrors('Usuario.Email')}" th:errors="*{Usuario.Email}"></span>
-                            <span id="EmailError" class="text-danger"></span>
-                        </div>
-                        <div class="form-floating col">
-                            <input type="text" class="form-control" id="Password" placeholder="Password" th:field="*{Usuario.Password}" onblur="return passwordValidation(this)" required>
-                            <label for="Password" class="form-label">Password</label>
-                            <span th:if="${#fields.hasErrors('Usuario.Password')}" th:errors="*{Usuario.Password}"></span>
-                            <span id="PasswordError" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="row mb-3 g-2">
-                        <div class="form-floating col">
-                            <input type="text" class="form-control" id="Nombre" placeholder="Nombre"  th:field="*{Usuario.Nombre}" required onkeypress="return onlyWords(event, this)">
-                            <label for="Nombre" class="form-label">Nombre</label>
-                            <span th:if="${#fields.hasErrors('Usuario.Nombre')}" th:errors="*{Usuario.Nombre}"></span>
-                            <span id="NombreError" class="text-danger"></span>
-                        </div>
-                        <div class="form-floating col">
-                            <input type="text" class="form-control" id="ApellidoPaterno" placeholder="Apellido Paterno" th:field="*{Usuario.ApellidoPaterno}" required onkeypress="return onlyWords(event, this)">
-                            <label for="ApellidoPaterno" class="form-label">Apellido Paterno</label>
-                            <span th:if="${#fields.hasErrors('Usuario.ApellidoPaterno')}" th:errors="*{Usuario.ApellidoPaterno}"></span>
-                            <span id="ApellidoPaternoError" class="text-danger"></span>
-                        </div>
-                        <div class="form-floating col">
-                            <input type="text" class="form-control" id="ApellidoMaterno" placeholder="Apellido Materno" th:field="*{Usuario.ApellidoMaterno}" required onkeypress="return onlyWords(event, this)">
-                            <label for="ApellidoMaterno" class="form-label">Apellido Materno</label>
-                            <span th:if="${#fields.hasErrors('Usuario.ApellidoMaterno')}" th:errors="*{Usuario.ApellidoMaterno}"></span>
-                            <span id="ApellidoMaternoError" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="row mb-2 g-2">
-                        <div class="form-floating col">
-                            <input type="date" class="form-control" id="FechaNacimiento" placeholder="Fecha Nacimiento" required max="2025-12-31" th:field="*{Usuario.FechaNacimiento}">
-                            <label for="FechaNacimiento">Fecha De Nacimiento</label>
-                            <span th:if="${#fields.hasErrors('Usuario.FechaNacimiento')}" th:errors="*{Usuario.FechaNacimiento}"></span>
-                        </div>
-                        <div class="form-floating col">
-                            <input type="text" class="form-control" id="Curp" placeholder="Curp" th:field="*{Usuario.CURP}" onblur="return curpValidation(event, this)">
-                            <label for="Curp" class="form-label">Curp</label>
-                            <span id="CurpError" class="text-danger"></span>
-                            <span th:if="${#fields.hasErrors('Usuario.CURP')}" th:errors="*{Usuario.CURP}"></span>
-                        </div>
-                    </div>
-                    <div class="row mb-3 g-2">
-                        <label for="formFile" class="form-label mb-1" style="color: white;">Selecciona el sexo</label>
-                        <div class="form-check col-2">
-                            <input class="form-check-input" type="radio" name="sexo" id="sexo" value="M" th:field="*{Usuario.Sexo}">
-                            <label class="form-check-label" for="radioDefault1" style="color:white;">
-                                Masculino
-                            </label>
-                        </div>
-                        <div class="form-check col-2">
-                            <input class="form-check-input" type="radio" name="sexo" id="sexo" value="F" th:field="*{Usuario.Sexo}">
-                            <label class="form-check-label" for="radioDefault2" style="color:white;">
-                                Femenino
-                            </label>
-                        </div>
-                    </div>
-                    <div class="row mb-1 g-2">
-                        <div class="form-floating col">
-                            <input type="tel" class="form-control" id="Telefono" placeholder="Telefono" th:field="*{Usuario.Telefono}" onblur="return phoneValidation(event, this)">
-                            <label for="Telefono">Numero de telefono</label>
-                            <span id="TelefonoError" class="text-danger"></span>
-                            <span th:if="${#fields.hasErrors('Usuario.Telefono')}" th:errors="*{Usuario.Telefono}"></span>
-                        </div>
-                        <div class="form-floating col">
-                            <input type="tel" class="form-control" id="Celular" placeholder="Celular" th:field="*{Usuario.Celular}" onblur="return phoneValidation(event, this)">
-                            <label for="Celular" class="form-label">Celular</label>
-                            <span id="CelularError" class="text-danger"></span>
-                            <span th:if="${#fields.hasErrors('Usuario.Celular')}" th:errors="*{Usuario.Celular}"></span>
-                        </div>
-                        <div class="form-floating col">
-                            <select class="form-select" id="Rol" aria-label="Floating label select example" th:field="*{Usuario.Rol.IdRol}" onChange="rolValidation(event, this)">
-                                <option value="0" selected>Selecciona el Rol</option>
-                                <option th:each="rol : ${listaRol}" th:value="${rol.IdRol}" th:text="${rol.Nombre}"></option>
-                            </select>
-                            <label for="Rol">Rol</label>
-                            <span id="RolError" class="text-danger"></span>
-                            <span th:if="${#fields.hasErrors('Usuario.Rol.IdRol')}" th:errors="*{Usuario.Rol.IdRol}"></span>
-                        </div>
-                    </div>
+                    </form>
                 </div>
-                <div th:if="*{(Usuario.IdUsuario > 0 && Direccion.IdDireccion == 0) 
-                     || (Usuario.IdUsuario > 0 && Direccion.IdDireccion > 0)
-                     || (Usuario.IdUsuario == 0 && Direccion.IdDireccion == 0)}">
-                    <div class="row mb-3 g-2">
-                        <label for="formFile" class="form-label mb-1" style="color: white;">Direccion</label>
-                        <div class="form-floating col">
-                            <select class="form-select" id="Pais" aria-label="Floating label select example" th:field="*{Direccion.Colonia.Municipio.Estado.Pais.IdPais}" onChange="rolValidation(event, this)">
-                                <option value="0">Selecciona el Pais</option>
-                                <option th:each="paises : ${listaPais}" th:value="${paises.IdPais}" th:text="${paises.Nombre}"></option>
-                            </select>
-                            <label for="Pais">Pais</label>
-                            <span id="PaisError" class="text-danger"></span>
-                            <span th:if="${#fields.hasErrors('Direccion.Colonia.Municipio.Estado.Pais.IdPais')}" th:errors="*{Direccion.Colonia.Municipio.Estado.IdEstado}"></span>
-                        </div>
-                        <div class="form-floating col">
-                            <select class="form-select" id="Estado" aria-label="Floating label select example" th:field="*{Direccion.Colonia.Municipio.Estado.IdEstado}" onChange="rolValidation(event, this)">
-                                <option value="0">Selecciona el Estado</option>
-                                <option th:each="estados : ${listaEstados}" th:value="${estados.IdEstado}" th:text="${estados.Nombre}"></option>
-                            </select>
-                            <label for="Estado">Estado</label>
-                            <span id="EstadoError" class="text-danger"></span>
-                            <span th:if="${#fields.hasErrors('Direccion.Colonia.Municipio.IdMunicipio')}" th:errors="*{Direccion.Colonia.Municipio.IdMunicipio}"></span>
-                        </div>
-                        <div class="form-floating col">
-                            <select class="form-select" id="Municipio" aria-label="Floating label select example" th:field="*{Direccion.Colonia.Municipio.IdMunicipio}" onChange="rolValidation(event, this)">
-                                <option value="0">Selecciona el Municipio</option>
-                                <option th:each="municipios : ${listaMunicipio}" th:value="${municipios.IdMunicipio}" th:text="${municipios.Nombre}"></option>
-                            </select>
-                            <label for="Municipio">Municipio</label>
-                            <span id="MunicipioError" class="text-danger"></span>
-                            <span th:if="${#fields.hasErrors('Direccion.Colonia.Municipio.IdMunicipio')}" th:errors="*{Direccion.Colonia.Municipio.IdMunicipio}"></span>
-                        </div>
-                        <div class="form-floating col">
-                            <select class="form-select" id="Colonia" aria-label="Floating label select example" th:field="*{Direccion.Colonia.IdColonia}" onChange="rolValidation(event, this)">
-                                <option value="0">Selecciona la Colonia</option>
-                                <option th:each="colonias : ${listaColonia}" th:value="${colonias.IdColonia}" th:text="${colonias.Nombre}"></option>
-                            </select>
-                            <label for="Colonia">Colonia</label>
-                            <span id="ColoniaError" class="text-danger"></span>
-                            <span th:if="${#fields.hasErrors('Direccion.Colonia.IdColonia')}" th:errors="*{Direccion.Colonia.IdColonia}"></span>
-                        </div>
-                    </div>
-                    <div class="row mb-3 g-2">
-                        <div class="form-floating col">
-                            <input type="text" class="form-control" id="Calle" placeholder="Calle" th:field="*{Direccion.Calle}">
-                            <label for="Direccion">Calle</label>
-                            <span th:if="${#fields.hasErrors('Direccion.Calle')}" th:errors="*{Direccion.Calle}"></span>
-                        </div>
-                        <div class="form-floating col">
-                            <input type="text" class="form-control" id="NumeroInterior" placeholder="Num.Int" th:field="*{Direccion.NumeroInterior}">
-                            <label for="Direccion">Num.Int</label>
-                            <span th:if="${#fields.hasErrors('Direccion.NumeroInterior')}" th:errors="*{Direccion.NumeroInterior}"></span>
-                        </div>
-                        <div class="form-floating col">
-                            <input type="text" class="form-control" id="NumeroExterior" placeholder="Num.Ext" th:field="*{Direccion.NumeroExterior}">
-                            <label for="Direccion">Num.Ext</label>
-                            <span th:if="${#fields.hasErrors('Direccion.NumeroExterior')}" th:errors="*{Direccion.NumeroExterior}"></span>
-                        </div>
-                        <div class="form-floating col">
-                            <input class="form-control" id="CodigoPostal" type="text" placeholder="CodigoPostal" th:field="*{Direccion.Colonia.CodigoPostal}">
-                            <label for="CodigoPostal">CodigoPostal</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <button id="btnAgregar" type="submit" class="btn btn-primary col-12" >Enviar</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
     <script>

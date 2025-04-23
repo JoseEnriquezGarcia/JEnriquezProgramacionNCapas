@@ -185,7 +185,7 @@ public class UsuarioController {
                     usuarioDireccion.Usuario.Rol = new Rol();
                     usuarioDireccion.Usuario.Rol.setIdRol(row.getCell(11) != null ? ((int) row.getCell(11).getNumericCellValue()) : 3);
                     usuarioDireccion.Usuario.setImagen(null);
-                    usuarioDireccion.Usuario.setStatus(row.getCell(12) != null || row.getCell(12).equals("") ? ((int) row.getCell(12).getNumericCellValue()) : 1);
+                    usuarioDireccion.Usuario.setStatus(row.getCell(12) != null ? ((int) row.getCell(12).getNumericCellValue()) : 1);
                     
                     usuarioDireccion.Direccion = new Direccion();
                     usuarioDireccion.Direccion.setCalle(row.getCell(13).getStringCellValue());
@@ -193,7 +193,7 @@ public class UsuarioController {
                     usuarioDireccion.Direccion.setNumeroExterior(dataFormatter.formatCellValue(row.getCell(15)));
                     
                     usuarioDireccion.Direccion.Colonia = new Colonia();
-                    usuarioDireccion.Direccion.Colonia.setIdColonia(row.getCell(16) != null ? (int) row.getCell(16).getNumericCellValue() : null);
+                    usuarioDireccion.Direccion.Colonia.setIdColonia(row.getCell(16) != null ? (int) row.getCell(16).getNumericCellValue() : 0);
                     
                     listaUsuarios.add(usuarioDireccion);
                 }
