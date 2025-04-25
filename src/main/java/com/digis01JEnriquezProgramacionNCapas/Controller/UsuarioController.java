@@ -61,6 +61,195 @@ public class UsuarioController {
     @Autowired
     private DireccionDAOImplementation direccionDAOImplementation;
 
+    @GetMapping
+    public String Index(Model model) {
+        //Result result = usuarioDAOImplementation.GetAll();
+        Result resultRol = rolDAOImplementation.GetAll();
+        Result result = usuarioDAOImplementation.GetAllJPA();
+        Usuario usuarioBusqueda = new Usuario();
+        usuarioBusqueda.Rol = new Rol();
+
+        model.addAttribute("usuarioBusqueda", usuarioBusqueda);
+        model.addAttribute("listaUsuarios", result.objects);
+        model.addAttribute("listaRol", resultRol.objects);
+        return "Index";
+    }
+
+    @PostMapping("/GetAllDinamico")
+    public String BusquedaDinamica(@ModelAttribute Usuario usuario, Model model) {
+
+        Result result = usuarioDAOImplementation.GetAllDinamico(usuario);
+        Result resultRol = rolDAOImplementation.GetAll();
+
+        Usuario usuarioBusqueda = new Usuario();
+        usuarioBusqueda.Rol = new Rol();
+
+        model.addAttribute("listaUsuarios", result.objects);
+        model.addAttribute("listaRol", resultRol.objects);
+        model.addAttribute("usuarioBusqueda", usuarioBusqueda);
+
+        return "Index";
+    }
+
+    @GetMapping("Form/{IdUsuario}")
+    public String Form(@PathVariable int IdUsuario, Model model) {
+        Result result = new Result();
+        Result resultPais = new Result();
+        result = rolDAOImplementation.GetAll();
+        resultPais = paisDAOImplementation.GetAll();
+
+        if (IdUsuario == 0) {
+            UsuarioDireccion usuarioDireccion = new UsuarioDireccion();
+            usuarioDireccion.Usuario = new Usuario();
+            usuarioDireccion.Usuario.Rol = new Rol();
+            usuarioDireccion.Direccion = new Direccion();
+            usuarioDireccion.Direccion.Colonia = new Colonia();
+
+            model.addAttribute("listaRol", result.objects);
+            model.addAttribute("listaPais", resultPais.objects);
+            model.addAttribute("usuarioDireccion", usuarioDireccion);
+            return "UsuarioForm";
+        } else {
+            result = usuarioDAOImplementation.GetAllById(IdUsuario);
+            model.addAttribute("listaUsuario", result.object);
+            return "UsuarioView";
+        }
+
+    }
+
+    @GetMapping("/FormView")
+    public String FormView(Model model, @RequestParam int IdUsuario, @RequestParam(required = false) Integer IdDireccion) {
+        Result result = new Result();
+        result = rolDAOImplementation.GetAll();
+
+        if (IdUsuario > 0 && IdDireccion == 0) {
+            //Agrega una direccion
+            UsuarioDireccion usuarioDireccion = new UsuarioDireccion();
+            usuarioDireccion.Usuario = new Usuario();
+            usuarioDireccion.Usuario.setIdUsuario(IdUsuario);
+            usuarioDireccion.Direccion = new Direccion();
+            usuarioDireccion.Direccion.setIdDireccion(0);
+            usuarioDireccion.Direccion.Colonia = new Colonia();
+
+            model.addAttribute("listaPais", paisDAOImplementation.GetAll().correct ? paisDAOImplementation.GetAll().objects : null);
+            model.addAttribute("usuarioDireccion", usuarioDireccion);
+        } else if (IdUsuario > 0 && IdDireccion > 0) {
+            //Editar direccion
+            UsuarioDireccion usuarioDireccion = new UsuarioDireccion();
+            usuarioDireccion.Usuario = new Usuario();
+            usuarioDireccion.Usuario.setIdUsuario(IdUsuario);
+            usuarioDireccion.Direccion = new Direccion();
+            usuarioDireccion.Direccion.setIdDireccion(IdDireccion);
+
+            usuarioDireccion.Direccion = (Direccion) direccionDAOImplementation.GetByIdDireccion(IdDireccion).object;
+
+            model.addAttribute("listaPais", paisDAOImplementation.GetAll().correct ? paisDAOImplementation.GetAll().objects : null);
+            model.addAttribute("listaEstados", estadoDAOImplementation.EstadoGetAllById(usuarioDireccion.Direccion.Colonia.Municipio.Estado.Pais.getIdPais()).objects);
+            model.addAttribute("listaMunicipio", municipioDAOImplementation.MunicipioGetAllById(usuarioDireccion.Direccion.Colonia.Municipio.Estado.getIdEstado()).objects);
+            model.addAttribute("listaColonia", coloniaDAOImplementation.ColoniaGetAllById(usuarioDireccion.Direccion.Colonia.Municipio.getIdMunicipio()).objects);
+            model.addAttribute("usuarioDireccion", usuarioDireccion);
+        } else {
+            //Editar un usuario
+            UsuarioDireccion usuarioDireccion = new UsuarioDireccion();
+
+            usuarioDireccion = (UsuarioDireccion) usuarioDAOImplementation.GetById(IdUsuario).object;
+
+            usuarioDireccion.Direccion = new Direccion();
+            usuarioDireccion.Direccion.setIdDireccion(IdDireccion);
+            model.addAttribute("usuarioDireccion", usuarioDireccion);
+            model.addAttribute("listaRol", result.objects);
+        }
+
+        return "UsuarioForm";
+    }
+
+    @GetMapping("/DeleteDireccion")
+    public String DeleteDireccion(@RequestParam int IdDireccion) {
+        direccionDAOImplementation.DireccionDelete(IdDireccion);
+        return "redirect:/usuario";
+    }
+
+    @GetMapping("/DeleteUsuario")
+    public String DeleteUsuario(@RequestParam int IdUsuario) {
+        usuarioDAOImplementation.DireccionUsuarioDelete(IdUsuario);
+        return "redirect:/usuario";
+    }
+
+    @GetMapping("/UpdateStatus/{IdUsuario}/{Status}")
+    public String UpdateStatus(@PathVariable int IdUsuario, @PathVariable int Status) {
+        usuarioDAOImplementation.UpdateStatus(IdUsuario, Status);
+        return "redirect:/usuario";
+    }
+
+    @PostMapping("Form")
+    public String Form(@Valid @ModelAttribute UsuarioDireccion usuarioDireccion, BindingResult BindingResult, @RequestParam MultipartFile imagenFile, Model model) {
+//        if(BindingResult.hasErrors()){
+//            model.addAttribute("listaUsuario", usuarioDireccion);
+//            
+//            return "UsuarioForm";
+//        }
+        usuarioDireccion.Usuario.setStatus(1);
+        try {
+            if (!imagenFile.isEmpty()) {
+                byte[] bytes = imagenFile.getBytes();
+                String imgBase64 = Base64.getEncoder().encodeToString(bytes);
+                usuarioDireccion.Usuario.setImagen(imgBase64);
+
+            }
+        } catch (Exception ex) {
+
+        }
+        if (usuarioDireccion.Usuario.getIdUsuario() > 0 && usuarioDireccion.Direccion.getIdDireccion() == 0) {
+            //Agregar una direccion
+            direccionDAOImplementation.DireccionAdd(usuarioDireccion);
+        } else {
+            if (usuarioDireccion.Usuario.getIdUsuario() > 0 && usuarioDireccion.Direccion.getIdDireccion() > 0) {
+                //Editar Direccion
+                direccionDAOImplementation.DireccionUpdate(usuarioDireccion.Direccion);
+            } else if (usuarioDireccion.Usuario.getIdUsuario() > 0 && usuarioDireccion.Direccion.getIdDireccion() == -1) {
+                //Editar usuario
+                usuarioDAOImplementation.UsuarioUpdate(usuarioDireccion.Usuario);
+            } else {
+                //Agregar Usuario y Direccion
+                //usuarioDAOImplementation.Add(usuarioDireccion);
+                usuarioDAOImplementation.AddJPA(usuarioDireccion);
+            }
+        }
+        return ("redirect:/usuario");
+    }
+
+    @GetMapping("/EstadoGetAllById/{IdPais}")
+    @ResponseBody
+    public Result EstadoGetAllById(@PathVariable int IdPais) {
+        Result result = estadoDAOImplementation.EstadoGetAllById(IdPais);
+
+        return result;
+    }
+
+    @GetMapping("/MunicipioGetAllById/{IdEstado}")
+    @ResponseBody
+    public Result MunicipioGetAllById(@PathVariable int IdEstado) {
+        Result result = municipioDAOImplementation.MunicipioGetAllById(IdEstado);
+
+        return result;
+    }
+
+    @GetMapping("/ColoniaGetAllById/{IdMunicipio}")
+    @ResponseBody
+    public Result ColoniaGetAllById(@PathVariable int IdMunicipio) {
+        Result result = coloniaDAOImplementation.ColoniaGetAllById(IdMunicipio);
+
+        return result;
+    }
+
+    @GetMapping("/ColoniaGetAllByCP/{CodigoPostal}")
+    @ResponseBody
+    public Result ColoniaGetAllByCP(@PathVariable String CodigoPostal) {
+        Result result = coloniaDAOImplementation.ColoniaGetAllByCP(CodigoPostal);
+
+        return result;
+    }
+    
     @GetMapping("/CargaMasiva")
     public String CargaMsiva() {
         return "CargaMasiva";
@@ -269,193 +458,5 @@ public class UsuarioController {
             }
         }
         return listaErrores;
-    }
-
-    @GetMapping
-    public String Index(Model model) {
-        Result result = usuarioDAOImplementation.GetAll();
-        Result resultRol = rolDAOImplementation.GetAll();
-
-        Usuario usuarioBusqueda = new Usuario();
-        usuarioBusqueda.Rol = new Rol();
-
-        model.addAttribute("usuarioBusqueda", usuarioBusqueda);
-        model.addAttribute("listaUsuarios", result.objects);
-        model.addAttribute("listaRol", resultRol.objects);
-        return "Index";
-    }
-
-    @PostMapping("/GetAllDinamico")
-    public String BusquedaDinamica(@ModelAttribute Usuario usuario, Model model) {
-
-        Result result = usuarioDAOImplementation.GetAllDinamico(usuario);
-        Result resultRol = rolDAOImplementation.GetAll();
-
-        Usuario usuarioBusqueda = new Usuario();
-        usuarioBusqueda.Rol = new Rol();
-
-        model.addAttribute("listaUsuarios", result.objects);
-        model.addAttribute("listaRol", resultRol.objects);
-        model.addAttribute("usuarioBusqueda", usuarioBusqueda);
-
-        return "Index";
-    }
-
-    @GetMapping("Form/{IdUsuario}")
-    public String Form(@PathVariable int IdUsuario, Model model) {
-        Result result = new Result();
-        Result resultPais = new Result();
-        result = rolDAOImplementation.GetAll();
-        resultPais = paisDAOImplementation.GetAll();
-
-        if (IdUsuario == 0) {
-            UsuarioDireccion usuarioDireccion = new UsuarioDireccion();
-            usuarioDireccion.Usuario = new Usuario();
-            usuarioDireccion.Usuario.Rol = new Rol();
-            usuarioDireccion.Direccion = new Direccion();
-            usuarioDireccion.Direccion.Colonia = new Colonia();
-
-            model.addAttribute("listaRol", result.objects);
-            model.addAttribute("listaPais", resultPais.objects);
-            model.addAttribute("usuarioDireccion", usuarioDireccion);
-            return "UsuarioForm";
-        } else {
-            result = usuarioDAOImplementation.GetAllById(IdUsuario);
-            model.addAttribute("listaUsuario", result.object);
-            return "UsuarioView";
-        }
-
-    }
-
-    @GetMapping("/FormView")
-    public String FormView(Model model, @RequestParam int IdUsuario, @RequestParam(required = false) Integer IdDireccion) {
-        Result result = new Result();
-        result = rolDAOImplementation.GetAll();
-
-        if (IdUsuario > 0 && IdDireccion == 0) {
-            //Agrega una direccion
-            UsuarioDireccion usuarioDireccion = new UsuarioDireccion();
-            usuarioDireccion.Usuario = new Usuario();
-            usuarioDireccion.Usuario.setIdUsuario(IdUsuario);
-            usuarioDireccion.Direccion = new Direccion();
-            usuarioDireccion.Direccion.setIdDireccion(0);
-            usuarioDireccion.Direccion.Colonia = new Colonia();
-
-            model.addAttribute("listaPais", paisDAOImplementation.GetAll().correct ? paisDAOImplementation.GetAll().objects : null);
-            model.addAttribute("usuarioDireccion", usuarioDireccion);
-        } else if (IdUsuario > 0 && IdDireccion > 0) {
-            //Editar direccion
-            UsuarioDireccion usuarioDireccion = new UsuarioDireccion();
-            usuarioDireccion.Usuario = new Usuario();
-            usuarioDireccion.Usuario.setIdUsuario(IdUsuario);
-            usuarioDireccion.Direccion = new Direccion();
-            usuarioDireccion.Direccion.setIdDireccion(IdDireccion);
-
-            usuarioDireccion.Direccion = (Direccion) direccionDAOImplementation.GetByIdDireccion(IdDireccion).object;
-
-            model.addAttribute("listaPais", paisDAOImplementation.GetAll().correct ? paisDAOImplementation.GetAll().objects : null);
-            model.addAttribute("listaEstados", estadoDAOImplementation.EstadoGetAllById(usuarioDireccion.Direccion.Colonia.Municipio.Estado.Pais.getIdPais()).objects);
-            model.addAttribute("listaMunicipio", municipioDAOImplementation.MunicipioGetAllById(usuarioDireccion.Direccion.Colonia.Municipio.Estado.getIdEstado()).objects);
-            model.addAttribute("listaColonia", coloniaDAOImplementation.ColoniaGetAllById(usuarioDireccion.Direccion.Colonia.Municipio.getIdMunicipio()).objects);
-            model.addAttribute("usuarioDireccion", usuarioDireccion);
-        } else {
-            //Editar un usuario
-            UsuarioDireccion usuarioDireccion = new UsuarioDireccion();
-
-            usuarioDireccion = (UsuarioDireccion) usuarioDAOImplementation.GetById(IdUsuario).object;
-
-            usuarioDireccion.Direccion = new Direccion();
-            usuarioDireccion.Direccion.setIdDireccion(IdDireccion);
-            model.addAttribute("usuarioDireccion", usuarioDireccion);
-            model.addAttribute("listaRol", result.objects);
-        }
-
-        return "UsuarioForm";
-    }
-
-    @GetMapping("/DeleteDireccion")
-    public String DeleteDireccion(@RequestParam int IdDireccion) {
-        direccionDAOImplementation.DireccionDelete(IdDireccion);
-        return "redirect:/usuario";
-    }
-
-    @GetMapping("/DeleteUsuario")
-    public String DeleteUsuario(@RequestParam int IdUsuario) {
-        usuarioDAOImplementation.DireccionUsuarioDelete(IdUsuario);
-        return "redirect:/usuario";
-    }
-
-    @GetMapping("/UpdateStatus/{IdUsuario}/{Status}")
-    public String UpdateStatus(@PathVariable int IdUsuario, @PathVariable int Status) {
-        usuarioDAOImplementation.UpdateStatus(IdUsuario, Status);
-        return "redirect:/usuario";
-    }
-
-    @PostMapping("Form")
-    public String Form(@Valid @ModelAttribute UsuarioDireccion usuarioDireccion, BindingResult BindingResult, @RequestParam MultipartFile imagenFile, Model model) {
-//        if(BindingResult.hasErrors()){
-//            model.addAttribute("listaUsuario", usuarioDireccion);
-//            
-//            return "UsuarioForm";
-//        }
-        usuarioDireccion.Usuario.setStatus(1);
-        try {
-            if (!imagenFile.isEmpty()) {
-                byte[] bytes = imagenFile.getBytes();
-                String imgBase64 = Base64.getEncoder().encodeToString(bytes);
-                usuarioDireccion.Usuario.setImagen(imgBase64);
-
-            }
-        } catch (Exception ex) {
-
-        }
-        if (usuarioDireccion.Usuario.getIdUsuario() > 0 && usuarioDireccion.Direccion.getIdDireccion() == 0) {
-            //Agregar una direccion
-            direccionDAOImplementation.DireccionAdd(usuarioDireccion);
-        } else {
-            if (usuarioDireccion.Usuario.getIdUsuario() > 0 && usuarioDireccion.Direccion.getIdDireccion() > 0) {
-                //Editar Direccion
-                direccionDAOImplementation.DireccionUpdate(usuarioDireccion.Direccion);
-            } else if (usuarioDireccion.Usuario.getIdUsuario() > 0 && usuarioDireccion.Direccion.getIdDireccion() == -1) {
-                //Editar usuario
-                usuarioDAOImplementation.UsuarioUpdate(usuarioDireccion.Usuario);
-            } else {
-                //Agregar Usuario y Direccion
-                usuarioDAOImplementation.Add(usuarioDireccion);
-            }
-        }
-        return ("redirect:/usuario");
-    }
-
-    @GetMapping("/EstadoGetAllById/{IdPais}")
-    @ResponseBody
-    public Result EstadoGetAllById(@PathVariable int IdPais) {
-        Result result = estadoDAOImplementation.EstadoGetAllById(IdPais);
-
-        return result;
-    }
-
-    @GetMapping("/MunicipioGetAllById/{IdEstado}")
-    @ResponseBody
-    public Result MunicipioGetAllById(@PathVariable int IdEstado) {
-        Result result = municipioDAOImplementation.MunicipioGetAllById(IdEstado);
-
-        return result;
-    }
-
-    @GetMapping("/ColoniaGetAllById/{IdMunicipio}")
-    @ResponseBody
-    public Result ColoniaGetAllById(@PathVariable int IdMunicipio) {
-        Result result = coloniaDAOImplementation.ColoniaGetAllById(IdMunicipio);
-
-        return result;
-    }
-
-    @GetMapping("/ColoniaGetAllByCP/{CodigoPostal}")
-    @ResponseBody
-    public Result ColoniaGetAllByCP(@PathVariable String CodigoPostal) {
-        Result result = coloniaDAOImplementation.ColoniaGetAllByCP(CodigoPostal);
-
-        return result;
     }
 }
