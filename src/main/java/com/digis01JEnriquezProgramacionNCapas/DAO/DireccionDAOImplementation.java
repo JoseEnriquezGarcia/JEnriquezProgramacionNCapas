@@ -1,5 +1,7 @@
 package com.digis01JEnriquezProgramacionNCapas.DAO;
 
+
+import com.digis01JEnriquezProgramacionNCapas.JPA.Usuario;
 import com.digis01JEnriquezProgramacionNCapas.ML.Colonia;
 import com.digis01JEnriquezProgramacionNCapas.ML.Direccion;
 import com.digis01JEnriquezProgramacionNCapas.ML.Estado;
@@ -7,6 +9,8 @@ import com.digis01JEnriquezProgramacionNCapas.ML.Municipio;
 import com.digis01JEnriquezProgramacionNCapas.ML.Pais;
 import com.digis01JEnriquezProgramacionNCapas.ML.Result;
 import com.digis01JEnriquezProgramacionNCapas.ML.UsuarioDireccion;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import java.sql.ResultSet;
 import java.sql.Types;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,10 @@ public class DireccionDAOImplementation implements IDireccionDAO{
     
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    
+    @Autowired
+    private EntityManager entityManager;
+    
     @Override
     public Result GetByIdDireccion(int IdDireccion) {
         Result result = new Result();
@@ -155,6 +163,132 @@ public class DireccionDAOImplementation implements IDireccionDAO{
             result.errorMessage = ex.getLocalizedMessage();
             result.ex = ex;
         }
+        return result;
+    }
+
+    @Override
+    public Result GetByIdDireccionJPA(int IdDireccion) {
+        Result result = new Result();
+        
+        try {
+            com.digis01JEnriquezProgramacionNCapas.JPA.Direccion direccionJPA = new com.digis01JEnriquezProgramacionNCapas.JPA.Direccion();
+            
+            direccionJPA = entityManager.find(com.digis01JEnriquezProgramacionNCapas.JPA.Direccion.class, IdDireccion);
+            
+            Direccion direccion = new Direccion();
+            
+            direccion.setIdDireccion(direccionJPA.getIdDireccion());
+            direccion.setCalle(direccionJPA.getCalle());
+            direccion.setNumeroInterior(direccionJPA.getNumeroInterior());
+            direccion.setNumeroExterior(direccionJPA.getNumeroExterior());
+            
+            direccion.Colonia = new Colonia();
+            direccion.Colonia.setIdColonia(direccionJPA.Colonia.getIdColonia());
+            direccion.Colonia.setNombre(direccionJPA.Colonia.getNombre());
+            direccion.Colonia.setCodigoPostal(direccionJPA.Colonia.getCodigoPostal());
+            
+            direccion.Colonia.Municipio = new Municipio();
+            direccion.Colonia.Municipio.setIdMunicipio(direccionJPA.Colonia.Municipio.getIdMunicipio());
+            direccion.Colonia.Municipio.setNombre(direccionJPA.Colonia.Municipio.getNombre());
+            
+            direccion.Colonia.Municipio.Estado = new Estado();
+            direccion.Colonia.Municipio.Estado.setIdEstado(direccionJPA.Colonia.Municipio.Estado.getIdEstado());
+            direccion.Colonia.Municipio.Estado.setNombre(direccionJPA.Colonia.Municipio.Estado.getNombre());
+            
+            direccion.Colonia.Municipio.Estado.Pais = new Pais();
+            direccion.Colonia.Municipio.Estado.Pais.setIdPais(direccionJPA.Colonia.Municipio.Estado.Pais.getIdPais());
+            direccion.Colonia.Municipio.Estado.Pais.setNombre(direccionJPA.Colonia.Municipio.Estado.Pais.getNombre());
+            
+            result.object = direccion;
+            
+            result.correct = true;
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+            result.object = null;
+        }
+        
+        return result;
+    }
+    
+    @Transactional
+    @Override
+    public Result DireccionAddJPA(UsuarioDireccion usuarioDireccion) {
+        Result result = new Result();
+        
+        try {
+            com.digis01JEnriquezProgramacionNCapas.JPA.Direccion direccionJPA = new com.digis01JEnriquezProgramacionNCapas.JPA.Direccion();
+            
+            direccionJPA.setCalle(usuarioDireccion.Direccion.getCalle());
+            direccionJPA.setNumeroInterior(usuarioDireccion.Direccion.getNumeroInterior());
+            direccionJPA.setNumeroExterior(usuarioDireccion.Direccion.getNumeroExterior());
+            direccionJPA.Colonia = new com.digis01JEnriquezProgramacionNCapas.JPA.Colonia();
+            direccionJPA.Colonia.setIdColonia(usuarioDireccion.Direccion.Colonia.getIdColonia());
+            direccionJPA.Usuario = new Usuario();
+            direccionJPA.Usuario.setIdUsuario(usuarioDireccion.Usuario.getIdUsuario());
+            
+            entityManager.persist(direccionJPA);
+            result.correct = true;
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        
+        return result;
+    }
+    
+    @Transactional
+    @Override
+    public Result DireccionUpdateJPA(Direccion direccion) {
+        Result result  = new Result ();
+        
+        try {
+            com.digis01JEnriquezProgramacionNCapas.JPA.Direccion direccionJPA = new com.digis01JEnriquezProgramacionNCapas.JPA.Direccion();
+            
+            direccionJPA = entityManager.find(com.digis01JEnriquezProgramacionNCapas.JPA.Direccion.class, direccion.getIdDireccion());
+            
+            direccionJPA.setIdDireccion(direccion.getIdDireccion());
+            direccionJPA.setCalle(direccion.getCalle());
+            direccionJPA.setNumeroInterior(direccion.getNumeroInterior());
+            direccionJPA.setNumeroExterior(direccion.getNumeroExterior());
+            
+            direccionJPA.Colonia = new com.digis01JEnriquezProgramacionNCapas.JPA.Colonia();
+            direccionJPA.Colonia.setIdColonia(direccion.Colonia.getIdColonia());
+            
+            direccionJPA.Usuario.getIdUsuario();
+            
+            entityManager.merge(direccionJPA);
+            
+            result.correct = true;
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        
+        return result;
+    }
+    
+    @Transactional
+    @Override
+    public Result DireccionDeleteJPA(int IdDireccion) {
+        Result result = new Result();
+        
+        try {
+            com.digis01JEnriquezProgramacionNCapas.JPA.Direccion direccionJPA = new com.digis01JEnriquezProgramacionNCapas.JPA.Direccion();
+            
+            direccionJPA = entityManager.find(com.digis01JEnriquezProgramacionNCapas.JPA.Direccion.class, IdDireccion);
+            
+            entityManager.remove(direccionJPA);
+            result.correct = true;
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        
         return result;
     }
     

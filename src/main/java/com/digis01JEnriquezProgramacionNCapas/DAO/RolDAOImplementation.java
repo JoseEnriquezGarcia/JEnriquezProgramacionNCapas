@@ -2,9 +2,12 @@ package com.digis01JEnriquezProgramacionNCapas.DAO;
 
 import com.digis01JEnriquezProgramacionNCapas.ML.Result;
 import com.digis01JEnriquezProgramacionNCapas.ML.Rol;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,6 +19,9 @@ public class RolDAOImplementation implements IRolDAO{
     @Autowired
     private JdbcTemplate jdbcTemplate;
             
+    @Autowired
+    private EntityManager entityManager;
+    
     @Override
     public Result GetAll() {
         Result result = new Result();
@@ -46,6 +52,25 @@ public class RolDAOImplementation implements IRolDAO{
             result.ex = ex;
         }
         
+        return result;
+    }
+
+    @Override
+    public Result GetallJPA() {
+        Result result = new Result();
+        TypedQuery<com.digis01JEnriquezProgramacionNCapas.JPA.Rol> queryRol = entityManager.createQuery("FROM Rol", com.digis01JEnriquezProgramacionNCapas.JPA.Rol.class);
+        List<com.digis01JEnriquezProgramacionNCapas.JPA.Rol> listaroles = queryRol.getResultList();
+        
+        result.objects = new ArrayList<>();
+        
+        for (com.digis01JEnriquezProgramacionNCapas.JPA.Rol rolJPA : listaroles) {
+            Rol rol = new Rol();
+            
+            rol.setIdRol(rolJPA.getIdRol());
+            rol.setNombre(rolJPA.getNombre());
+            
+            result.objects.add(rol);
+        }
         return result;
     }
     

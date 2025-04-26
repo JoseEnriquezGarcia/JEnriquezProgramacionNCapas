@@ -5,4 +5,6 @@ import com.digis01JEnriquezProgramacionNCapas.ML.Result;
 public interface IRolDAO {
     
     Result GetAll();
+    
+    Result GetallJPA();
 }

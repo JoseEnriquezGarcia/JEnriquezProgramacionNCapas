@@ -110,7 +110,8 @@ public class UsuarioController {
             model.addAttribute("usuarioDireccion", usuarioDireccion);
             return "UsuarioForm";
         } else {
-            result = usuarioDAOImplementation.GetAllById(IdUsuario);
+            //result = usuarioDAOImplementation.GetAllById(IdUsuario);
+            result = usuarioDAOImplementation.GetByAllIdJPA(IdUsuario);
             model.addAttribute("listaUsuario", result.object);
             return "UsuarioView";
         }
@@ -141,7 +142,8 @@ public class UsuarioController {
             usuarioDireccion.Direccion = new Direccion();
             usuarioDireccion.Direccion.setIdDireccion(IdDireccion);
 
-            usuarioDireccion.Direccion = (Direccion) direccionDAOImplementation.GetByIdDireccion(IdDireccion).object;
+            //usuarioDireccion.Direccion = (Direccion) direccionDAOImplementation.GetByIdDireccion(IdDireccion).object;
+            usuarioDireccion.Direccion = (Direccion) direccionDAOImplementation.GetByIdDireccionJPA(IdDireccion).object;
 
             model.addAttribute("listaPais", paisDAOImplementation.GetAll().correct ? paisDAOImplementation.GetAll().objects : null);
             model.addAttribute("listaEstados", estadoDAOImplementation.EstadoGetAllById(usuarioDireccion.Direccion.Colonia.Municipio.Estado.Pais.getIdPais()).objects);
@@ -152,8 +154,9 @@ public class UsuarioController {
             //Editar un usuario
             UsuarioDireccion usuarioDireccion = new UsuarioDireccion();
 
-            usuarioDireccion = (UsuarioDireccion) usuarioDAOImplementation.GetById(IdUsuario).object;
-
+            //usuarioDireccion = (UsuarioDireccion) usuarioDAOImplementation.GetById(IdUsuario).object;
+            usuarioDireccion = (UsuarioDireccion) usuarioDAOImplementation.GetByIdJPA(IdUsuario).object;
+            
             usuarioDireccion.Direccion = new Direccion();
             usuarioDireccion.Direccion.setIdDireccion(IdDireccion);
             model.addAttribute("usuarioDireccion", usuarioDireccion);
@@ -165,24 +168,27 @@ public class UsuarioController {
 
     @GetMapping("/DeleteDireccion")
     public String DeleteDireccion(@RequestParam int IdDireccion) {
-        direccionDAOImplementation.DireccionDelete(IdDireccion);
+        //direccionDAOImplementation.DireccionDelete(IdDireccion);
+        direccionDAOImplementation.DireccionDeleteJPA(IdDireccion);
         return "redirect:/usuario";
     }
 
     @GetMapping("/DeleteUsuario")
     public String DeleteUsuario(@RequestParam int IdUsuario) {
-        usuarioDAOImplementation.DireccionUsuarioDelete(IdUsuario);
+        //usuarioDAOImplementation.DireccionUsuarioDelete(IdUsuario);
+        usuarioDAOImplementation.DireccionUsuarioDeleteJPA(IdUsuario);
         return "redirect:/usuario";
     }
 
     @GetMapping("/UpdateStatus/{IdUsuario}/{Status}")
     public String UpdateStatus(@PathVariable int IdUsuario, @PathVariable int Status) {
-        usuarioDAOImplementation.UpdateStatus(IdUsuario, Status);
+        //usuarioDAOImplementation.UpdateStatus(IdUsuario, Status);
+        usuarioDAOImplementation.UpdateStatusJPA(IdUsuario, Status);
         return "redirect:/usuario";
     }
 
     @PostMapping("Form")
-    public String Form(@Valid @ModelAttribute UsuarioDireccion usuarioDireccion, BindingResult BindingResult, @RequestParam MultipartFile imagenFile, Model model) {
+    public String Form(@Valid @ModelAttribute UsuarioDireccion usuarioDireccion, BindingResult BindingResult, @RequestParam(required = false) MultipartFile imagenFile, Model model) {
 //        if(BindingResult.hasErrors()){
 //            model.addAttribute("listaUsuario", usuarioDireccion);
 //            
@@ -201,14 +207,17 @@ public class UsuarioController {
         }
         if (usuarioDireccion.Usuario.getIdUsuario() > 0 && usuarioDireccion.Direccion.getIdDireccion() == 0) {
             //Agregar una direccion
-            direccionDAOImplementation.DireccionAdd(usuarioDireccion);
+            //direccionDAOImplementation.DireccionAdd(usuarioDireccion);
+            direccionDAOImplementation.DireccionAddJPA(usuarioDireccion);
         } else {
             if (usuarioDireccion.Usuario.getIdUsuario() > 0 && usuarioDireccion.Direccion.getIdDireccion() > 0) {
                 //Editar Direccion
-                direccionDAOImplementation.DireccionUpdate(usuarioDireccion.Direccion);
+                //direccionDAOImplementation.DireccionUpdate(usuarioDireccion.Direccion);
+                direccionDAOImplementation.DireccionUpdateJPA(usuarioDireccion.Direccion);
             } else if (usuarioDireccion.Usuario.getIdUsuario() > 0 && usuarioDireccion.Direccion.getIdDireccion() == -1) {
                 //Editar usuario
-                usuarioDAOImplementation.UsuarioUpdate(usuarioDireccion.Usuario);
+                //usuarioDAOImplementation.UsuarioUpdate(usuarioDireccion.Usuario);
+                usuarioDAOImplementation.UsuarioUpdateJPA(usuarioDireccion.Usuario);
             } else {
                 //Agregar Usuario y Direccion
                 //usuarioDAOImplementation.Add(usuarioDireccion);
