@@ -4,4 +4,6 @@ import com.digis01JEnriquezProgramacionNCapas.ML.Result;
 
 public interface IMunicipioDAO {
     Result MunicipioGetAllById(int IdEstado);
+    
+    Result MunicipioGetAllByIdJPA(int IdEstado);
 }

@@ -64,8 +64,9 @@ public class UsuarioController {
     @GetMapping
     public String Index(Model model) {
         //Result result = usuarioDAOImplementation.GetAll();
-        Result resultRol = rolDAOImplementation.GetAll();
+        //Result resultRol = rolDAOImplementation.GetAll();
         Result result = usuarioDAOImplementation.GetAllJPA();
+        Result resultRol = rolDAOImplementation.GetallJPA();
         Usuario usuarioBusqueda = new Usuario();
         usuarioBusqueda.Rol = new Rol();
 
@@ -78,8 +79,10 @@ public class UsuarioController {
     @PostMapping("/GetAllDinamico")
     public String BusquedaDinamica(@ModelAttribute Usuario usuario, Model model) {
 
-        Result result = usuarioDAOImplementation.GetAllDinamico(usuario);
-        Result resultRol = rolDAOImplementation.GetAll();
+        //Result result = usuarioDAOImplementation.GetAllDinamico(usuario);
+        Result result = usuarioDAOImplementation.GetAllDinamicoJPA(usuario);
+        //Result resultRol = rolDAOImplementation.GetAll();
+        Result resultRol = rolDAOImplementation.GetallJPA();
 
         Usuario usuarioBusqueda = new Usuario();
         usuarioBusqueda.Rol = new Rol();
@@ -95,9 +98,10 @@ public class UsuarioController {
     public String Form(@PathVariable int IdUsuario, Model model) {
         Result result = new Result();
         Result resultPais = new Result();
-        result = rolDAOImplementation.GetAll();
-        resultPais = paisDAOImplementation.GetAll();
-
+        //result = rolDAOImplementation.GetAll();
+        result = rolDAOImplementation.GetallJPA();
+        //resultPais = paisDAOImplementation.GetAll();
+        resultPais = paisDAOImplementation.GetAllJPA();
         if (IdUsuario == 0) {
             UsuarioDireccion usuarioDireccion = new UsuarioDireccion();
             usuarioDireccion.Usuario = new Usuario();
@@ -121,8 +125,9 @@ public class UsuarioController {
     @GetMapping("/FormView")
     public String FormView(Model model, @RequestParam int IdUsuario, @RequestParam(required = false) Integer IdDireccion) {
         Result result = new Result();
-        result = rolDAOImplementation.GetAll();
-
+        //result = rolDAOImplementation.GetAll();
+        result = rolDAOImplementation.GetallJPA();
+        
         if (IdUsuario > 0 && IdDireccion == 0) {
             //Agrega una direccion
             UsuarioDireccion usuarioDireccion = new UsuarioDireccion();
@@ -132,7 +137,8 @@ public class UsuarioController {
             usuarioDireccion.Direccion.setIdDireccion(0);
             usuarioDireccion.Direccion.Colonia = new Colonia();
 
-            model.addAttribute("listaPais", paisDAOImplementation.GetAll().correct ? paisDAOImplementation.GetAll().objects : null);
+            //model.addAttribute("listaPais", paisDAOImplementation.GetAll().correct ? paisDAOImplementation.GetAll().objects : null);
+            model.addAttribute("listaPais", paisDAOImplementation.GetAllJPA().correct ? paisDAOImplementation.GetAllJPA().objects: null);
             model.addAttribute("usuarioDireccion", usuarioDireccion);
         } else if (IdUsuario > 0 && IdDireccion > 0) {
             //Editar direccion
@@ -145,10 +151,14 @@ public class UsuarioController {
             //usuarioDireccion.Direccion = (Direccion) direccionDAOImplementation.GetByIdDireccion(IdDireccion).object;
             usuarioDireccion.Direccion = (Direccion) direccionDAOImplementation.GetByIdDireccionJPA(IdDireccion).object;
 
-            model.addAttribute("listaPais", paisDAOImplementation.GetAll().correct ? paisDAOImplementation.GetAll().objects : null);
-            model.addAttribute("listaEstados", estadoDAOImplementation.EstadoGetAllById(usuarioDireccion.Direccion.Colonia.Municipio.Estado.Pais.getIdPais()).objects);
-            model.addAttribute("listaMunicipio", municipioDAOImplementation.MunicipioGetAllById(usuarioDireccion.Direccion.Colonia.Municipio.Estado.getIdEstado()).objects);
-            model.addAttribute("listaColonia", coloniaDAOImplementation.ColoniaGetAllById(usuarioDireccion.Direccion.Colonia.Municipio.getIdMunicipio()).objects);
+//            model.addAttribute("listaPais", paisDAOImplementation.GetAll().correct ? paisDAOImplementation.GetAll().objects : null);
+//            model.addAttribute("listaEstados", estadoDAOImplementation.EstadoGetAllById(usuarioDireccion.Direccion.Colonia.Municipio.Estado.Pais.getIdPais()).objects);
+//            model.addAttribute("listaMunicipio", municipioDAOImplementation.MunicipioGetAllById(usuarioDireccion.Direccion.Colonia.Municipio.Estado.getIdEstado()).objects);
+//            model.addAttribute("listaColonia", coloniaDAOImplementation.ColoniaGetAllById(usuarioDireccion.Direccion.Colonia.Municipio.getIdMunicipio()).objects);
+            model.addAttribute("listaPais", paisDAOImplementation.GetAllJPA().correct ? paisDAOImplementation.GetAllJPA().objects : null);
+            model.addAttribute("listaEstados", estadoDAOImplementation.EstadoGetAllByIdJPA(usuarioDireccion.Direccion.Colonia.Municipio.Estado.Pais.getIdPais()).objects);
+            model.addAttribute("listaMunicipio", municipioDAOImplementation.MunicipioGetAllByIdJPA(usuarioDireccion.Direccion.Colonia.Municipio.Estado.getIdEstado()).objects);
+            model.addAttribute("listaColonia", coloniaDAOImplementation.ColoniaGetAllByIdJPA(usuarioDireccion.Direccion.Colonia.Municipio.getIdMunicipio()).objects);
             model.addAttribute("usuarioDireccion", usuarioDireccion);
         } else {
             //Editar un usuario
@@ -230,7 +240,8 @@ public class UsuarioController {
     @GetMapping("/EstadoGetAllById/{IdPais}")
     @ResponseBody
     public Result EstadoGetAllById(@PathVariable int IdPais) {
-        Result result = estadoDAOImplementation.EstadoGetAllById(IdPais);
+        //Result result = estadoDAOImplementation.EstadoGetAllById(IdPais);
+        Result result = estadoDAOImplementation.EstadoGetAllByIdJPA(IdPais);
 
         return result;
     }
@@ -238,24 +249,24 @@ public class UsuarioController {
     @GetMapping("/MunicipioGetAllById/{IdEstado}")
     @ResponseBody
     public Result MunicipioGetAllById(@PathVariable int IdEstado) {
-        Result result = municipioDAOImplementation.MunicipioGetAllById(IdEstado);
-
+        //Result result = municipioDAOImplementation.MunicipioGetAllById(IdEstado);
+        Result result = municipioDAOImplementation.MunicipioGetAllByIdJPA(IdEstado);
         return result;
     }
 
     @GetMapping("/ColoniaGetAllById/{IdMunicipio}")
     @ResponseBody
     public Result ColoniaGetAllById(@PathVariable int IdMunicipio) {
-        Result result = coloniaDAOImplementation.ColoniaGetAllById(IdMunicipio);
-
+        //Result result = coloniaDAOImplementation.ColoniaGetAllById(IdMunicipio);
+        Result result = coloniaDAOImplementation.ColoniaGetAllByIdJPA(IdMunicipio);
         return result;
     }
 
     @GetMapping("/ColoniaGetAllByCP/{CodigoPostal}")
     @ResponseBody
     public Result ColoniaGetAllByCP(@PathVariable String CodigoPostal) {
-        Result result = coloniaDAOImplementation.ColoniaGetAllByCP(CodigoPostal);
-
+        //Result result = coloniaDAOImplementation.ColoniaGetAllByCP(CodigoPostal);
+        Result result = coloniaDAOImplementation.ColoniaGetAllByCPJPA(CodigoPostal);
         return result;
     }
     
@@ -311,7 +322,8 @@ public class UsuarioController {
         }        
         
         for (UsuarioDireccion usuarioDireccion : listaUsuarios) {
-            usuarioDAOImplementation.Add(usuarioDireccion);
+            //usuarioDAOImplementation.Add(usuarioDireccion);
+            usuarioDAOImplementation.AddJPA(usuarioDireccion);
         }
         return "CargaMasiva";
     }

@@ -218,7 +218,7 @@
         }
         function onlyWords(event, element) {
             var key = event.key;
-            var regEx = /^[A-Za-z]+([\ A-Za-z]+)*/;
+            var regEx = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]$/;
             var errorSpan = document.getElementById(element.id + "Error");
 
             if (key.match(regEx)) {
@@ -331,7 +331,7 @@
                         $("#Estado").attr("disabled", true);
                         $("#Municipio").attr("disabled", true);
                         $("#Colonia").empty();
-                        $("#Colonia").append("<option value=0>Selecciona la colonia</option>");
+                        $("#Colonia").append("<option value=0>Selecciona la Colonia</option>");
                         $("#Pais").val(data.municipio.estado.pais.idPais);
                         $("#Estado").append("<option selected value=" + data.municipio.estado.idEstado + ">" + data.municipio.estado.nombre + "</option>");
                         $("#Municipio").append("<option selected value=" + data.municipio.idMunicipio + ">" + data.municipio.nombre + "</option>");

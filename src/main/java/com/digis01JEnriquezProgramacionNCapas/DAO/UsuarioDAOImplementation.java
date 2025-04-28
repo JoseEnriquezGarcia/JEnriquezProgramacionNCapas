@@ -750,7 +750,7 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
             usuarioJPA.setImagen(usuario.getImagen());
 
             entityManager.merge(usuarioJPA);
-            
+
             result.correct = true;
 
         } catch (Exception ex) {
@@ -765,53 +765,62 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
     @Override
     public Result DireccionUsuarioDeleteJPA(int IdUsuario) {
         Result result = new Result();
-        
+
         try {
             com.digis01JEnriquezProgramacionNCapas.JPA.Usuario usuarioJPA = new com.digis01JEnriquezProgramacionNCapas.JPA.Usuario();
-            com.digis01JEnriquezProgramacionNCapas.JPA.Direccion direccionJPA = new com.digis01JEnriquezProgramacionNCapas.JPA.Direccion();
-            
+            com.digis01JEnriquezProgramacionNCapas.JPA.Direccion direccion = new com.digis01JEnriquezProgramacionNCapas.JPA.Direccion();
+
+            TypedQuery<com.digis01JEnriquezProgramacionNCapas.JPA.Direccion> queryDirecciones = entityManager.createQuery("FROM Direccion WHERE Usuario.IdUsuario = :idusuario", com.digis01JEnriquezProgramacionNCapas.JPA.Direccion.class);
+            queryDirecciones.setParameter("idusuario", IdUsuario);
+            List<com.digis01JEnriquezProgramacionNCapas.JPA.Direccion> listaDirecciones = queryDirecciones.getResultList();
+
+            for (com.digis01JEnriquezProgramacionNCapas.JPA.Direccion direccionJPA : listaDirecciones) {
+                entityManager.remove(direccionJPA);
+            }
+
             usuarioJPA = entityManager.find(com.digis01JEnriquezProgramacionNCapas.JPA.Usuario.class, IdUsuario);
-            
-            direccionJPA.Usuario = new com.digis01JEnriquezProgramacionNCapas.JPA.Usuario();
-                    
-            direccionJPA = entityManager.find(com.digis01JEnriquezProgramacionNCapas.JPA.Direccion.class, direccionJPA.Usuario = usuarioJPA);
-            
-            entityManager.remove(direccionJPA);
-            
+
             entityManager.remove(usuarioJPA);
-            
+
             result.correct = true;
         } catch (Exception ex) {
             result.correct = false;
             result.errorMessage = ex.getLocalizedMessage();
             result.ex = ex;
         }
-        
+
         return result;
     }
-    
+
     @Transactional
     @Override
     public Result UpdateStatusJPA(int IdUsuario, int Status) {
         Result result = new Result();
-        
+
         try {
             com.digis01JEnriquezProgramacionNCapas.JPA.Usuario usuarioJPA = new com.digis01JEnriquezProgramacionNCapas.JPA.Usuario();
-            
+
             usuarioJPA = entityManager.find(com.digis01JEnriquezProgramacionNCapas.JPA.Usuario.class, IdUsuario);
-            
+
             usuarioJPA.setStatus(Status);
-            
+
             entityManager.merge(usuarioJPA);
-            
+
             result.correct = true;
         } catch (Exception ex) {
             result.correct = false;
             result.errorMessage = ex.getLocalizedMessage();
             result.ex = ex;
         }
-        
+
         return result;
     }
+
+    @Override
+    public Result GetAllDinamicoJPA(Usuario usuario) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    
 
 }
