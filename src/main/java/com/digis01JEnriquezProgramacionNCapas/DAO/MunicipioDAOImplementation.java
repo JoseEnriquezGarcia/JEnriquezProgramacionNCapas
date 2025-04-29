@@ -60,8 +60,8 @@ public class MunicipioDAOImplementation implements IMunicipioDAO{
         Result result = new Result();
         
         try {
-            TypedQuery<com.digis01JEnriquezProgramacionNCapas.JPA.Municipio> queryMunicipio = entityManager.createQuery("FROM Municipio WHERE Estado.IdEstado = :idestado", com.digis01JEnriquezProgramacionNCapas.JPA.Municipio.class);
-            queryMunicipio.setParameter("idestado", IdEstado);
+            TypedQuery<com.digis01JEnriquezProgramacionNCapas.JPA.Municipio> queryMunicipio = entityManager.createQuery("FROM Municipio WHERE Estado.IdEstado = :IdEstado", com.digis01JEnriquezProgramacionNCapas.JPA.Municipio.class);
+            queryMunicipio.setParameter("IdEstado", IdEstado);
             List<com.digis01JEnriquezProgramacionNCapas.JPA.Municipio> listaMunicipios = queryMunicipio.getResultList();
             
             result.objects = new ArrayList<>();

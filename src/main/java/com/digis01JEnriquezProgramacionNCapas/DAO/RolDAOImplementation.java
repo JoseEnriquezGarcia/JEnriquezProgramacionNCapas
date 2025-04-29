@@ -45,7 +45,7 @@ public class RolDAOImplementation implements IRolDAO {
 
                 return 1;
             });
-
+            result.correct = true;
         } catch (Exception ex) {
             result.correct = false;
             result.errorMessage = ex.getLocalizedMessage();
@@ -72,6 +72,8 @@ public class RolDAOImplementation implements IRolDAO {
 
                 result.objects.add(rol);
             }
+            
+            result.correct = true;
         } catch (Exception ex) {
             result.correct = false;
             result.errorMessage = ex.getLocalizedMessage();

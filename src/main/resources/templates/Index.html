@@ -3,13 +3,12 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate = ~{layout}>
     <head>
-        <title>UsuarioIndex</title>
+        <title>Usuario Index</title>
     </head>
-    <body layout:fragment = "body" style="background-color: #384052;">
+    <body layout:fragment = "body" style="background-color: #221E22;">
         <div class="container mt-3 col-sm-12 p-5">
-            <div class="row" style="">
-                <div class="col mt-3" style="margin-bottom: 10px;
-                     margin-left: 0px">
+            <div class="row justify-content-center">
+                <div class="col mt-3">
                     <form th:action="@{/usuario/GetAllDinamico}" method="post" id="searchBar" class="form my-2 mb-3 g-2 my-lg-0" th:object="${usuarioBusqueda}">
                         <div class="row mb-1 g-2">
                             <div class="col-2">
@@ -30,8 +29,18 @@
                                     <option th:each="rol : ${listaRol}" th:value="${rol.IdRol}" th:text="${rol.Nombre}"></option>
                                 </select>
                             </div>
-                            <div class="col-2">
-                                <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
+                            <div class="col-1 mt-1">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" value="1" id="disableStatus" autocomplete="off">
+                                    <label class="form-check-label" for="disableStatus">Sin Status</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" th:checked="${Status == null}" value="2" id="searchStatus" autocomplete="off" th:field="*{Status}">
+                                    <label class="form-check-label" for="searchStatus">Status</label>
+                                </div>
+                            </div>
+                            <div class="col-1">
+                                <button class="btn btn-success my-2 my-sm-0" type="submit">Search</button>
                             </div>
                         </div>
                     </form>
@@ -61,7 +70,7 @@
                             <td th:text="${usuarioDirecciones.Usuario.UserName}" scope="row"></td>
                             <td th:text="${'Telefono' +': ' + usuarioDirecciones.Usuario.Telefono + ' ' + 'Celular' +': '+ usuarioDirecciones.Usuario.Celular}" scope="row"></td>
                             <td th:text="${usuarioDirecciones.Usuario.CURP}"></td>
-                            <td scope="row"><ul th:each="direccion : ${usuarioDirecciones.Direcciones}" th:utext="|${direccion.Calle ?: 'No hay datos por mostrar'} ${direccion.NumeroExterior ?: ''} ${direccion.NumeroInterior ?: ''} ${direccion.Colonia.Nombre ?: ''}|?: 'Sin datos'"></ul></td>
+                            <td scope="row"><ul th:each="direccion : ${usuarioDirecciones.Direcciones}" th:utext="|${direccion.Calle ?: 'No hay datos por mostrar'} ${direccion.NumeroExterior ?: 'No hay datos por mostrar'} ${direccion.NumeroInterior ?: 'No hay datos por mostrar'} ${direccion.Colonia.Nombre ?: 'No hay datos por mostrar'}|?: 'Sin datos'"></ul></td>
                             <td><div class="form-check form-switch"><input th:data-id="${usuarioDirecciones.Usuario.IdUsuario}" class="form-check-input" th:value="${usuarioDirecciones.Usuario.Status}" type="checkbox" role="switch" th:checked="${usuarioDirecciones.Usuario.Status == 1}" onchange="UpdateStatus(this)"></div></td>
                             <td scope="row"><div class="d-grid gap-2"><a class="btn btn-secondary" th:href="@{/usuario/Form/{IdUsuario}(IdUsuario = ${usuarioDirecciones.Usuario.IdUsuario})}"><i class="bi bi-pencil"></i></a></div></td>
                             <td scope="row"><div class="d-grid gap-2"><a class="btn btn-danger" th:href="@{/usuario/DeleteUsuario(IdUsuario = ${usuarioDirecciones.Usuario.IdUsuario})}"><i class="bi bi-trash3"></i></a></div></td>
@@ -88,12 +97,39 @@
             </nav>
         </div>
         <script>
+            
+            $("#searchStatus").on('change', function () {
+                let isChecked = $("#searchStatus").is(":checked");
+                let nuevoValor = isChecked ? 1 : 0;
+                
+                $("#searchStatus").val(nuevoValor);
+                
+                if (nuevoValor == 1) {
+                    $("#searchStatus").prop('checked', true);
+                }
+            });
+            
+            $("#disableStatus").on('change', function () {
+                let isChecked = $("#disableStatus").is(":checked");
+                let nuevoValor = isChecked ? 1 : 0;
+                
+                if (isChecked == true) {
+                    $("#disableStatus").val(nuevoValor);
+                    $("#disableStatus").prop('checked', true);
+                    $("#searchStatus").prop('hidden', false);
+                }else{
+                    $("#disabledStatus").val(nuevoValor);
+                    $("#disableStatus").prop('checked', false);
+                    $("#searchStatus").prop('hidden', true);
+                }
+            });
+            
             function UpdateStatus(element) {
                 let isChecked = $(element).is(":checked");
                 let valorOriginal = $(element).val();
                 let data = $(element).data("id");
                 let nuevoValor = isChecked ? 1 : 0;
-
+                
                 $.ajax({
                     type: "GET",
                     url: "/usuario/UpdateStatus/" + data + "/" + nuevoValor,
@@ -111,7 +147,7 @@
                     }
                 });
             }
-
+            
         </script>
     </body>
 </html>

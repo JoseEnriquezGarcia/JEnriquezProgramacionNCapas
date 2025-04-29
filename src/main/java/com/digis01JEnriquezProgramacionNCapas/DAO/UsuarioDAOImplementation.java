@@ -768,7 +768,6 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
 
         try {
             com.digis01JEnriquezProgramacionNCapas.JPA.Usuario usuarioJPA = new com.digis01JEnriquezProgramacionNCapas.JPA.Usuario();
-            com.digis01JEnriquezProgramacionNCapas.JPA.Direccion direccion = new com.digis01JEnriquezProgramacionNCapas.JPA.Direccion();
 
             TypedQuery<com.digis01JEnriquezProgramacionNCapas.JPA.Direccion> queryDirecciones = entityManager.createQuery("FROM Direccion WHERE Usuario.IdUsuario = :idusuario", com.digis01JEnriquezProgramacionNCapas.JPA.Direccion.class);
             queryDirecciones.setParameter("idusuario", IdUsuario);
@@ -818,9 +817,90 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
 
     @Override
     public Result GetAllDinamicoJPA(Usuario usuario) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Result result = new Result();
+        
+        usuario.setStatus(usuario.getStatus() == null ? 0 : usuario.getStatus());
+        try {
+            
+            
+            String queryDinamico = "FROM Usuario";
+            queryDinamico = queryDinamico + " WHERE UPPER(Nombre) LIKE UPPER(CONCAT('%', :Nombre ,'%'))";
+            queryDinamico = queryDinamico + " AND UPPER(ApellidoPaterno) LIKE UPPER(CONCAT('%', :Apaterno ,'%'))";
+            queryDinamico = queryDinamico + " AND UPPER(ApellidoMaterno) LIKE UPPER(CONCAT('%', :Amaterno ,'%'))";
+
+            queryDinamico = usuario.getStatus() <= 1 ? queryDinamico + " AND CAST(Status AS STRING) LIKE CONCAT('%', :Status ,'%')" : queryDinamico;
+
+            queryDinamico = usuario.Rol.getIdRol() != 0 ? queryDinamico + " AND CAST(Rol.IdRol AS String) LIKE CONCAT('%', :IdRol ,'%')" : queryDinamico;
+
+            TypedQuery<com.digis01JEnriquezProgramacionNCapas.JPA.Usuario> queryBusqueda = entityManager.createQuery(queryDinamico, com.digis01JEnriquezProgramacionNCapas.JPA.Usuario.class);
+            queryBusqueda.setParameter("Nombre", usuario.getNombre());
+            queryBusqueda.setParameter("Apaterno", usuario.getApellidoPaterno());
+            queryBusqueda.setParameter("Amaterno", usuario.getApellidoMaterno());
+
+            if (usuario.getStatus() <= 1) {
+                queryBusqueda.setParameter("Status", usuario.getStatus());
+            }
+
+            if (usuario.Rol.getIdRol() != 0) {
+                queryBusqueda.setParameter("Idrol", usuario.Rol.getIdRol());
+            }
+
+            List<com.digis01JEnriquezProgramacionNCapas.JPA.Usuario> listaUsuarios = queryBusqueda.getResultList();
+            result.objects = new ArrayList<>();
+
+            for (com.digis01JEnriquezProgramacionNCapas.JPA.Usuario usuarioJPA : listaUsuarios) {
+                UsuarioDireccion usuarioDireccion = new UsuarioDireccion();
+                usuarioDireccion.Usuario = new Usuario();
+
+                usuarioDireccion.Usuario.setIdUsuario(usuarioJPA.getIdUsuario());
+                usuarioDireccion.Usuario.setUserName(usuarioJPA.getUserName());
+                usuarioDireccion.Usuario.setNombre(usuarioJPA.getNombre());
+                usuarioDireccion.Usuario.setApellidoPaterno(usuarioJPA.getApellidoPaterno());
+                usuarioDireccion.Usuario.setApellidoMaterno(usuarioJPA.getApellidoMaterno());
+                usuarioDireccion.Usuario.setEmail(usuarioJPA.getEmail());
+                usuarioDireccion.Usuario.setPassword(usuarioJPA.getPassword());
+                usuarioDireccion.Usuario.setSexo(usuarioJPA.getSexo());
+                usuarioDireccion.Usuario.setFechaNacimiento(usuarioJPA.getFechaNacimiento());
+                usuarioDireccion.Usuario.setTelefono(usuarioJPA.getTelefono());
+                usuarioDireccion.Usuario.setCelular(usuarioJPA.getCelular());
+                usuarioDireccion.Usuario.setCURP(usuarioJPA.getCURP());
+                usuarioDireccion.Usuario.setImagen(usuarioJPA.getImagen());
+                usuarioDireccion.Usuario.setStatus(usuarioJPA.getStatus());
+
+                usuarioDireccion.Usuario.Rol = new Rol();
+                usuarioDireccion.Usuario.Rol.setIdRol(usuarioJPA.Rol.getIdRol());
+                usuarioDireccion.Usuario.Rol.setNombre(usuarioJPA.Rol.getNombre());
+
+                TypedQuery<com.digis01JEnriquezProgramacionNCapas.JPA.Direccion> queryDirecciones = entityManager.createQuery("FROM Direccion WHERE Usuario.IdUsuario = :IdUsuario", com.digis01JEnriquezProgramacionNCapas.JPA.Direccion.class);
+                queryDirecciones.setParameter("IdUsuario", usuarioJPA.getIdUsuario());
+                List<com.digis01JEnriquezProgramacionNCapas.JPA.Direccion> listaDirecciones = queryDirecciones.getResultList();
+                usuarioDireccion.Direcciones = new ArrayList<>();
+
+                for (com.digis01JEnriquezProgramacionNCapas.JPA.Direccion direccionJPA : listaDirecciones) {
+                    Direccion direccion = new Direccion();
+
+                    direccion.setIdDireccion(direccionJPA.getIdDireccion());
+                    direccion.setCalle(direccionJPA.getCalle());
+                    direccion.setNumeroInterior(direccionJPA.getNumeroInterior());
+                    direccion.setNumeroExterior(direccionJPA.getNumeroExterior());
+
+                    direccion.Colonia = new Colonia();
+                    direccion.Colonia.setIdColonia(direccionJPA.Colonia.getIdColonia());
+                    direccion.Colonia.setNombre(direccionJPA.Colonia.getNombre());
+
+                    usuarioDireccion.Direcciones.add(direccion);
+                }
+                result.objects.add(usuarioDireccion);
+            }
+
+            result.correct = true;
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+            result.objects = null;
+        }
+
+        return result;
     }
-
-    
-
 }

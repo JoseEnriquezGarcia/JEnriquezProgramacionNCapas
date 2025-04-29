@@ -1,70 +1,78 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
-
-    <body layout:fragment="body" style="background-color: #384052;">
+    <head>
+        <title>Carga Masiva</title>
+    </head>
+    <body layout:fragment="body" style="background-color: #221E22;">
         <div class="container mt-5">
-            <div class="row">
-                <div class="col">
-                    <form th:action="@{/usuario/CargaMasiva}" method="post" enctype="multipart/form-data">
-                        <div class="row" style="margin-left: 200px;">
-                            <div class="col mb-5">
-                                <a class="btn btn-primary col-5" id="Txt">Txt</a>
+            <div class="row justify-content-center">
+                <div class="card col-9" style="background-color: #272838;">
+                    <h2 class="text-center my-4">Selecciona el Tipo de Archivo</h2>
+                    <div class="row justify-content-center my-5">
+                        <div class="col-8">
+                            <form th:action="@{/usuario/CargaMasiva}" method="post" enctype="multipart/form-data">
+                                <div class="row" style="margin-left: 120px;">
+                                    <div class="col mb-5">
+                                        <a class="btn btn-primary col-5" id="Txt">Txt</a>
+                                    </div>
+                                    <br>
+                                    <div class="col">
+                                        <a class="btn btn-success col-5" id="Excel">Excel</a>
+                                    </div>
+                                </div>
+                                <div class="input-group mb-3 col-5">
+                                    <input type="file" class="form-control" name="archivo" id="archivo" onchange="validarFile(this)" disabled/>
+                                </div>
+                                <div class="row">
+                                <div class="col-5 mt-5" style="margin-left: 270px;">
+                                    <button class="btn btn-warning col-5" id="Enviar" type="submit" disabled>Cargar</button>
+                                </div>
+                                    </div>
+                            </form>
+                            <div class="col-5 mt-5" style="margin-left: 270px;" th:if="${success == true}">
+                                <a th:href="@{/usuario/Procesar}" class="btn btn-warning col-5">Procesar</a>
                             </div>
-                            <br>
-                            <div class="col">
-                                <a class="btn btn-success col-5" id="Excel">Excel</a>
-                            </div>
-                        </div>
-                        <div class="input-group mb-3 col-8">
-                            <input type="file" class="form-control" name="archivo" id="archivo" onchange="validarFile(this)" hidden/>
                         </div>
 
-                        <div class="col-5 mt-5" style="margin-left: 500px">
-                            <button class="btn btn-warning col-5" id="Enviar" type="submit" hidden>Cargar</button>
-                        </div>
-                    </form>
-                    <div class="col-5 mt-5" style="margin-left: 500px;" th:if="${success == true}">
-                        <a th:href="@{/usuario/Procesar}" class="btn btn-warning col-5" >Procesar</a>
+                        <div th:if="${listaErrores != null}">
+                            <div th:if="${!listaErrores.isEmpty()}">
+                                <table class="table table-danger mt-5">
+                                    <thead>
+                                    <th class="col">No.Fila</th>
+                                    <th class="col">Contenido</th>
+                                    <th class="col">Error</th>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr th:each="error: ${listaErrores}">
+                                            <td th:text="${error.Fila}"></td>
+                                            <td th:text="${error.Mensaje}"></td>
+                                            <td th:text="${error.Descripcion}"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>                
                     </div>
                 </div>
-
-                <div th:if="${listaErrores != null}">
-                    <div th:if="${!listaErrores.isEmpty()}">
-                        <table class="table table-danger mt-5">
-                            <thead>
-                            <th class="col">No.Fila</th>
-                            <th class="col">Contenido</th>
-                            <th class="col">Error</th>
-                            </thead>
-
-                            <tbody>
-                                <tr th:each="error: ${listaErrores}">
-                                    <td th:text="${error.Fila}"></td>
-                                    <td th:text="${error.Mensaje}"></td>
-                                    <td th:text="${error.Descripcion}"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>                
             </div>
         </div>
         <script>
             $("document").ready(function () {
                 $("#Txt").click(function () {
-                    $("#archivo").css("background-color", "#095BD5");
+                    $("#archivo").css("background-color", "#3E5C76");
                     $("#archivo").attr("accept", ".txt");
-                    $("#archivo").prop('hidden', false);
-                    $("#Enviar").prop('hidden', true);
+                    $("#archivo").prop('disabled', false);
+                    $("#Enviar").prop('disabled', true);
                     $("#archivo").val(null);
                 });
 
                 $("#Excel").click(function () {
                     $("#archivo").css("background-color", "#147448");
                     $("#archivo").attr("accept", ".xlsx");
-                    $("#archivo").prop('hidden', false);
-                    $("#Enviar").prop('hidden', true);
+                    $("#archivo").prop('disabled', false);
+                    $("#Enviar").prop('disabled', true);
                     $("#archivo").val(null);
                 });
             });
@@ -80,10 +88,10 @@
                 if (extensionesPermitidas.indexOf(extension) == -1) {
                     alert("Formato de archivo no valido");
                     document.getElementById(inputImage.id).value = "";
-                    document.getElementById('Enviar').hidden = true;
+                    document.getElementById('Enviar').disabled = true;
                     return;
                 }
-                document.getElementById('Enviar').hidden = false;
+                document.getElementById('Enviar').disabled = false;
             }
         </script>
     </body>

@@ -71,7 +71,7 @@ public class Usuario {
 
     private String Imagen;
     
-    private int Status;
+    private Integer Status;
     
     @Valid
     public Rol Rol;
@@ -190,11 +190,11 @@ public class Usuario {
         this.Imagen = Imagen;
     }
    
-    public int getStatus(){
+    public Integer getStatus(){
         return Status;
     }
     
-    public void setStatus(int Status){
+    public void setStatus(Integer Status){
         this.Status = Status;
     }
 }

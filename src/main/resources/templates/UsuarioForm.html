@@ -6,29 +6,28 @@
         <title>Formulario</title>
     </head>
 </head>
-<body layout:fragment="body" style="background-color: #384052;">
-    <div class="conatiner-sm mt-2">
-        <div class="row">
-            <div class="col-8" style="margin-left: 285px;">
-                <h1 class="text-center" style="color:white;">Registro</h1>
-                <div class=" p-5" style="background-color: #626266; border-radius: 10px; margin-bottom: 10px">
+<body layout:fragment="body" style="background-color: #221E22;">
+    <div class="conatiner-sm mt-1">
+        <div class="row justify-content-center">
+            <div class="col-8">
+                <div class="p-5" style="background-color: #272838; border-radius: 10px;">
+                    <h1 class="text-center">Registro</h1>
                     <form th:action="@{/usuario/Form}" method="POST" th:object="${usuarioDireccion}" enctype="multipart/form-data">
                         <input type="hidden" th:field="*{Usuario.IdUsuario}">
                         <input type="hidden" th:field="*{Direccion.IdDireccion}">
 
                         <div th:if="*{(Usuario.IdUsuario > 0 && Direccion.IdDireccion == -1) 
                              || (Usuario.IdUsuario == 0 && Direccion.IdDireccion == 0)}">
-                            <div class="row mb-3 g-2">
-                                <div class="card" style="width:200px;
-                                     margin-left: 360px">
+                            <div class="row mb-3 g-2 my-2">
+                                <div class="card" style="width:200px; margin-left: 360px;">
                                     <div class="card-body">
-                                        <img class="card-img-top" id="output" src="https://i.postimg.cc/7YH05GSc/Default-Image.png" alt="Card image">
+                                        <img class="card-img-top" id="output" th:src="${usuarioDireccion.Usuario.Imagen != null} ? 'data:image/png;base64,' + ${usuarioDireccion.Usuario.Imagen} : 'https://i.postimg.cc/7YH05GSc/Default-Image.png'" alt="Card image">
                                     </div>
                                 </div>
                             </div>
                             <div class="col" style="">
                                 <div class="mb-3 g-3">
-                                    <label for="imagenFile" class="form-label" style="color: white;">Fotografia</label>
+                                    <label for="imagenFile" class="form-label">Fotografia</label>
                                     <input type="file" class="form-control" id="imagenFile" name="imagenFile" accept="image/*" onChange="validarFile(event, this)">
                                 </div>
                             </div>
@@ -45,7 +44,7 @@
                                     <span id="EmailError" class="text-danger"></span>
                                 </div>
                                 <div class="form-floating col">
-                                    <input type="text" class="form-control" id="Password" placeholder="Password" th:field="*{Usuario.Password}" onblur="return passwordValidation(this)" required>
+                                    <input type="password" class="form-control" id="Password" placeholder="Password" th:field="*{Usuario.Password}" onblur="return passwordValidation(this)" required>
                                     <label for="Password" class="form-label">Password</label>
                                     <span th:if="${#fields.hasErrors('Usuario.Password')}" th:errors="*{Usuario.Password}"></span>
                                     <span id="PasswordError" class="text-danger"></span>
@@ -65,7 +64,7 @@
                                     <span id="ApellidoPaternoError" class="text-danger"></span>
                                 </div>
                                 <div class="form-floating col">
-                                    <input type="text" class="form-control" id="ApellidoMaterno" placeholder="Apellido Materno" th:field="*{Usuario.ApellidoMaterno}" required onkeypress="return onlyWords(event, this)">
+                                    <input type="text" class="form-control" id="ApellidoMaterno" placeholder="Apellido Materno" th:field="*{Usuario.ApellidoMaterno}" onkeypress="return onlyWords(event, this)">
                                     <label for="ApellidoMaterno" class="form-label">Apellido Materno</label>
                                     <span th:if="${#fields.hasErrors('Usuario.ApellidoMaterno')}" th:errors="*{Usuario.ApellidoMaterno}"></span>
                                     <span id="ApellidoMaternoError" class="text-danger"></span>
@@ -73,7 +72,7 @@
                             </div>
                             <div class="row mb-2 g-2">
                                 <div class="form-floating col">
-                                    <input type="date" class="form-control" id="FechaNacimiento" placeholder="Fecha Nacimiento" required max="2025-12-31" th:field="*{Usuario.FechaNacimiento}">
+                                    <input type="date" class="form-control" id="FechaNacimiento" placeholder="Fecha Nacimiento" required max="2025-12-31" th:field="*{Usuario.FechaNacimiento}" required>
                                     <label for="FechaNacimiento">Fecha De Nacimiento</label>
                                     <span th:if="${#fields.hasErrors('Usuario.FechaNacimiento')}" th:errors="*{Usuario.FechaNacimiento}"></span>
                                 </div>
@@ -85,23 +84,23 @@
                                 </div>
                             </div>
                             <div class="row mb-3 g-2">
-                                <label for="formFile" class="form-label mb-1" style="color: white;">Selecciona el sexo</label>
+                                <label for="formFile" class="form-label mb-1">Selecciona el sexo</label>
                                 <div class="form-check col-2">
                                     <input class="form-check-input" type="radio" name="sexo" id="sexo" value="M" th:field="*{Usuario.Sexo}">
-                                    <label class="form-check-label" for="radioDefault1" style="color:white;">
+                                    <label class="form-check-label" for="radioDefault1">
                                         Masculino
                                     </label>
                                 </div>
                                 <div class="form-check col-2">
                                     <input class="form-check-input" type="radio" name="sexo" id="sexo" value="F" th:field="*{Usuario.Sexo}">
-                                    <label class="form-check-label" for="radioDefault2" style="color:white;">
+                                    <label class="form-check-label" for="radioDefault2">
                                         Femenino
                                     </label>
                                 </div>
                             </div>
                             <div class="row mb-1 g-2">
                                 <div class="form-floating col">
-                                    <input type="tel" class="form-control" id="Telefono" placeholder="Telefono" th:field="*{Usuario.Telefono}" onblur="return phoneValidation(event, this)">
+                                    <input type="tel" class="form-control" id="Telefono" placeholder="Telefono" th:field="*{Usuario.Telefono}" required onblur="return phoneValidation(event, this)">
                                     <label for="Telefono">Numero de telefono</label>
                                     <span id="TelefonoError" class="text-danger"></span>
                                     <span th:if="${#fields.hasErrors('Usuario.Telefono')}" th:errors="*{Usuario.Telefono}"></span>
@@ -127,7 +126,7 @@
                              || (Usuario.IdUsuario > 0 && Direccion.IdDireccion > 0)
                              || (Usuario.IdUsuario == 0 && Direccion.IdDireccion == 0)}">
                             <div class="row mb-3 g-2">
-                                <label for="formFile" class="form-label mb-1" style="color: white;">Direccion</label>
+                                <label for="formFile" class="form-label mb-1">Direccion</label>
                                 <div class="form-floating col">
                                     <select class="form-select" id="Pais" aria-label="Floating label select example" th:field="*{Direccion.Colonia.Municipio.Estado.Pais.IdPais}" onChange="rolValidation(event, this)">
                                         <option value="0">Selecciona el Pais</option>
@@ -167,7 +166,7 @@
                             </div>
                             <div class="row mb-3 g-2">
                                 <div class="form-floating col">
-                                    <input type="text" class="form-control" id="Calle" placeholder="Calle" th:field="*{Direccion.Calle}">
+                                    <input type="text" class="form-control" id="Calle" placeholder="Calle" th:field="*{Direccion.Calle}" required>
                                     <label for="Direccion">Calle</label>
                                     <span th:if="${#fields.hasErrors('Direccion.Calle')}" th:errors="*{Direccion.Calle}"></span>
                                 </div>
@@ -177,7 +176,7 @@
                                     <span th:if="${#fields.hasErrors('Direccion.NumeroInterior')}" th:errors="*{Direccion.NumeroInterior}"></span>
                                 </div>
                                 <div class="form-floating col">
-                                    <input type="text" class="form-control" id="NumeroExterior" placeholder="Num.Ext" th:field="*{Direccion.NumeroExterior}">
+                                    <input type="text" class="form-control" id="NumeroExterior" placeholder="Num.Ext" th:field="*{Direccion.NumeroExterior}" required>
                                     <label for="Direccion">Num.Ext</label>
                                     <span th:if="${#fields.hasErrors('Direccion.NumeroExterior')}" th:errors="*{Direccion.NumeroExterior}"></span>
                                 </div>
@@ -187,8 +186,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <button id="btnAgregar" type="submit" class="btn btn-primary col-12" >Enviar</button>
+                        <div class="row justify-content-center my-5">
+                            <div class="col-12">
+                                <button id="btnAgregar" type="submit" class="btn btn-primary col-12">Enviar</button>
+                            </div>
                         </div>
                     </form>
                 </div>
