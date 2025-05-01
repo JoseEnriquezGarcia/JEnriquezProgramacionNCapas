@@ -29,14 +29,14 @@
                                     <option th:each="rol : ${listaRol}" th:value="${rol.IdRol}" th:text="${rol.Nombre}"></option>
                                 </select>
                             </div>
-                            <div class="col-1 mt-1">
+                            <div class="col-1 mb-2">
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" value="1" id="disableStatus" autocomplete="off">
-                                    <label class="form-check-label" for="disableStatus">Sin Status</label>
+                                    <input type="checkbox" class="form-check-input" th:value="1" id="StatusActivo" autocomplete="off" th:field="*{Status}">
+                                    <label class="form-check-label" for="disableStatus">Activo</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" th:checked="${Status == null}" value="2" id="searchStatus" autocomplete="off" th:field="*{Status}">
-                                    <label class="form-check-label" for="searchStatus">Status</label>
+                                    <input type="checkbox" class="form-check-input" th:value="0" id="StatusInactivo" autocomplete="off" th:field="*{Status}">
+                                    <label class="form-check-label" for="searchStatus">Inactivo</label>
                                 </div>
                             </div>
                             <div class="col-1">
@@ -97,39 +97,32 @@
             </nav>
         </div>
         <script>
-            
-            $("#searchStatus").on('change', function () {
-                let isChecked = $("#searchStatus").is(":checked");
-                let nuevoValor = isChecked ? 1 : 0;
-                
-                $("#searchStatus").val(nuevoValor);
-                
-                if (nuevoValor == 1) {
-                    $("#searchStatus").prop('checked', true);
+            $("#StatusActivo").on('change', function () {
+                let isChecked = $("#StatusActivo").is(":checked");
+
+                if (isChecked == true) {
+                    $("#StatusInactivo").prop('disabled', true);
+                } else {
+                    $("#StatusInactivo").prop('disabled', false);
                 }
             });
-            
-            $("#disableStatus").on('change', function () {
-                let isChecked = $("#disableStatus").is(":checked");
-                let nuevoValor = isChecked ? 1 : 0;
+
+            $("#StatusInactivo").on('change', function () {
+                let isChecked = $("#StatusInactivo").is(":checked");
                 
                 if (isChecked == true) {
-                    $("#disableStatus").val(nuevoValor);
-                    $("#disableStatus").prop('checked', true);
-                    $("#searchStatus").prop('hidden', false);
+                    $("#StatusActivo").prop('disabled', true);
                 }else{
-                    $("#disabledStatus").val(nuevoValor);
-                    $("#disableStatus").prop('checked', false);
-                    $("#searchStatus").prop('hidden', true);
+                    $("#StatusActivo").prop('disabled', false);
                 }
             });
-            
+
             function UpdateStatus(element) {
                 let isChecked = $(element).is(":checked");
                 let valorOriginal = $(element).val();
                 let data = $(element).data("id");
                 let nuevoValor = isChecked ? 1 : 0;
-                
+
                 $.ajax({
                     type: "GET",
                     url: "/usuario/UpdateStatus/" + data + "/" + nuevoValor,
@@ -147,7 +140,7 @@
                     }
                 });
             }
-            
+
         </script>
     </body>
 </html>

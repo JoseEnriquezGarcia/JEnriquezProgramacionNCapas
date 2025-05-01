@@ -72,7 +72,7 @@
                             </div>
                             <div class="row mb-2 g-2">
                                 <div class="form-floating col">
-                                    <input type="date" class="form-control" id="FechaNacimiento" placeholder="Fecha Nacimiento" required max="2025-12-31" th:field="*{Usuario.FechaNacimiento}" required>
+                                    <input type="date" class="form-control" id="FechaNacimiento" placeholder="Fecha Nacimiento" max="2025-12-31" th:field="*{Usuario.FechaNacimiento}" required>
                                     <label for="FechaNacimiento">Fecha De Nacimiento</label>
                                     <span th:if="${#fields.hasErrors('Usuario.FechaNacimiento')}" th:errors="*{Usuario.FechaNacimiento}"></span>
                                 </div>

@@ -819,16 +819,13 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
     public Result GetAllDinamicoJPA(Usuario usuario) {
         Result result = new Result();
         
-        usuario.setStatus(usuario.getStatus() == null ? 0 : usuario.getStatus());
         try {
-            
-            
             String queryDinamico = "FROM Usuario";
             queryDinamico = queryDinamico + " WHERE UPPER(Nombre) LIKE UPPER(CONCAT('%', :Nombre ,'%'))";
             queryDinamico = queryDinamico + " AND UPPER(ApellidoPaterno) LIKE UPPER(CONCAT('%', :Apaterno ,'%'))";
             queryDinamico = queryDinamico + " AND UPPER(ApellidoMaterno) LIKE UPPER(CONCAT('%', :Amaterno ,'%'))";
 
-            queryDinamico = usuario.getStatus() <= 1 ? queryDinamico + " AND CAST(Status AS STRING) LIKE CONCAT('%', :Status ,'%')" : queryDinamico;
+            queryDinamico = usuario.getStatus() != null ? queryDinamico + " AND CAST(Status AS STRING) LIKE CONCAT('%', :Status ,'%')" : queryDinamico;
 
             queryDinamico = usuario.Rol.getIdRol() != 0 ? queryDinamico + " AND CAST(Rol.IdRol AS String) LIKE CONCAT('%', :IdRol ,'%')" : queryDinamico;
 
@@ -837,7 +834,7 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
             queryBusqueda.setParameter("Apaterno", usuario.getApellidoPaterno());
             queryBusqueda.setParameter("Amaterno", usuario.getApellidoMaterno());
 
-            if (usuario.getStatus() <= 1) {
+            if (usuario.getStatus() != null) {
                 queryBusqueda.setParameter("Status", usuario.getStatus());
             }
 
