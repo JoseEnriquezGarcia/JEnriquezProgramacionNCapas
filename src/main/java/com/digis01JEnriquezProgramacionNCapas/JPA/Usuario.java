@@ -58,7 +58,7 @@ public class Usuario {
     private String Imagen;
     
     @Column(name = "status")
-    private int Status;
+    private Integer Status;
     
     @JoinColumn(name = "idrol")
     @ManyToOne
@@ -178,11 +178,11 @@ public class Usuario {
         this.Imagen = Imagen;
     }
    
-    public int getStatus(){
+    public Integer getStatus(){
         return Status;
     }
     
-    public void setStatus(int Status){
+    public void setStatus(Integer Status){
         this.Status = Status;
     }
 }
