@@ -19,19 +19,19 @@ public class SpringSecurityConfig {
         UserDetails programador = User.builder()
                 .username("programador")
                 .password("{noop}12345")
-                .roles("programador")
+                .roles("PROGRAMADOR")
                 .build();
         
         UserDetails administrador = User.builder()
                 .username("admin")
                 .password("{noop}12345")
-                .roles("administrador")
+                .roles("ADMIN")
                 .build();
         
         UserDetails analista = User.builder()
                 .username("analista")
                 .password("{noop}12345")
-                .roles("analista")
+                .roles("ANALISTA")
                 .build();
         
         return new InMemoryUserDetailsManager(programador, administrador, analista);
@@ -41,17 +41,20 @@ public class SpringSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         
         httpSecurity.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/usuario/Form/**")
-                .hasRole("analista")
-                
                 .requestMatchers("/usuario/CargaMasiva")
-                .hasRole("administrador")
+                .hasAnyRole("ADMIN", "PROGRAMADOR")
+                
+                .requestMatchers("/usuario/GetAllDinamico")
+                .hasAnyRole("ANALISTA", "ADMIN", "PROGRAMADOR")
+                
+                .requestMatchers("/usuario/Form/**")
+                .hasAnyRole("ANALISTA", "PROGRAMADOR")
                 
                 .requestMatchers("/usuario")
-                .hasAnyRole("administrador", "analista")
+                .hasAnyRole("ADMIN", "ANALISTA", "PROGRAMADOR")
                 
                 .requestMatchers("/usuario/**")
-                .hasRole("programador")
+                .hasRole("PROGRAMADOR")
                 
         )
                 .formLogin(login -> {

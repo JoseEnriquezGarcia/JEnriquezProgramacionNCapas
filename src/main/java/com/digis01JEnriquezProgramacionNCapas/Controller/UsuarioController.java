@@ -190,11 +190,6 @@ public class UsuarioController {
         return "redirect:/usuario";
     }
     
-    @GetMapping("/logout")
-    public String Logout(){
-       return "redirect:/logout";
-    }
-    
     @GetMapping("/UpdateStatus/{IdUsuario}/{Status}")
     public String UpdateStatus(@PathVariable int IdUsuario, @PathVariable int Status) {
         //usuarioDAOImplementation.UpdateStatus(IdUsuario, Status);
