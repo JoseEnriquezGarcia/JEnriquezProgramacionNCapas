@@ -1,5 +1,6 @@
 package com.digis01JEnriquezProgramacionNCapas.DAO;
 
+import com.digis01JEnriquezProgramacionNCapas.Configuration.SpringSecurityConfig;
 import com.digis01JEnriquezProgramacionNCapas.ML.Colonia;
 import com.digis01JEnriquezProgramacionNCapas.ML.Direccion;
 import com.digis01JEnriquezProgramacionNCapas.ML.Estado;
@@ -20,6 +21,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -30,7 +32,10 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
 
     @Autowired
     private EntityManager entityManager;
-
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
     @Override
     public Result GetAll() {
         Result result = new Result();
@@ -684,7 +689,7 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
             usuario.setApellidoPaterno(usuarioDireccion.Usuario.getApellidoPaterno());
             usuario.setApellidoMaterno(usuarioDireccion.Usuario.getApellidoMaterno());
             usuario.setEmail(usuarioDireccion.Usuario.getEmail());
-            usuario.setPassword(usuarioDireccion.Usuario.getPassword());
+            usuario.setPassword(passwordEncoder.encode(usuarioDireccion.Usuario.getPassword()));
             usuario.setSexo(usuarioDireccion.Usuario.getSexo());
             usuario.setFechaNacimiento(usuarioDireccion.Usuario.getFechaNacimiento());
             usuario.setTelefono(usuarioDireccion.Usuario.getTelefono());
@@ -737,7 +742,7 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
             usuarioJPA.setApellidoPaterno(usuario.getApellidoPaterno());
             usuarioJPA.setApellidoMaterno(usuario.getApellidoMaterno());
             usuarioJPA.setEmail(usuario.getEmail());
-            usuarioJPA.setPassword(usuario.getPassword());
+            usuarioJPA.setPassword(passwordEncoder.encode(usuario.getPassword()));
             usuarioJPA.setSexo(usuario.getSexo());
             usuarioJPA.setFechaNacimiento(usuario.getFechaNacimiento());
             usuarioJPA.setTelefono(usuario.getTelefono());
