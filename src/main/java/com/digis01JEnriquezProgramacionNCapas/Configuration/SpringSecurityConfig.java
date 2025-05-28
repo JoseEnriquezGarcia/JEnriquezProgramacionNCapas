@@ -46,19 +46,19 @@ public class SpringSecurityConfig {
         
         httpSecurity.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/usuario/CargaMasiva/**")
-                .hasAnyRole("ADMIN", "PROGRAMADOR")
+                .hasAnyAuthority("Administrador", "Sistemas")
                 
                 .requestMatchers("/usuario/GetAllDinamico")
-                .hasAnyRole("ANALISTA", "ADMIN", "PROGRAMADOR")
+                .hasAnyAuthority("Cliente", "Administrador", "Sistemas")
                 
                 .requestMatchers("/usuario/Form/**")
-                .hasAnyRole("ANALISTA", "PROGRAMADOR")
+                .hasAnyAuthority("Cliente", "Sistemas")
                 
                 .requestMatchers("/usuario")
-                .hasAnyRole("ADMIN", "ANALISTA", "PROGRAMADOR")
+                .hasAnyAuthority("Administrador", "Cliente", "Sistemas")
                 
                 .requestMatchers("/usuario/**")
-                .hasRole("PROGRAMADOR")
+                .hasAuthority("Sistemas")
                 
         )
                 .formLogin(login -> {
@@ -77,7 +77,7 @@ public class SpringSecurityConfig {
     public UserDetailsService jdbcUserDetails(DataSource dataSource){
         JdbcUserDetailsManager manager = new JdbcUserDetailsManager();
         manager.setDataSource(dataSource);
-        manager.setUsersByUsernameQuery("select Username, Password, status from Usuario where Username = ?");
+        manager.setUsersByUsernameQuery("select Username, Password, Status from Usuario where Username = ?");
         manager.setAuthoritiesByUsernameQuery("select Username, NombreRol from RolManager where Username = ?");
         
         return manager;

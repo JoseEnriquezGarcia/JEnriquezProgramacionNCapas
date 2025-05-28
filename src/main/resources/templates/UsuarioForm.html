@@ -44,7 +44,8 @@
                                     <span id="EmailError" class="text-danger"></span>
                                 </div>
                                 <div class="form-floating col">
-                                    <input type="password" class="form-control" id="Password" placeholder="Password" th:field="*{Usuario.Password}" onblur="return passwordValidation(this)" required>
+                                    <input type="password" class="form-control" id="Password" placeholder="Password" th:field="*{Usuario.Password}" required>
+                                    <!--onblur="return passwordValidation(this)" esto va en password-->
                                     <label for="Password" class="form-label">Password</label>
                                     <span th:if="${#fields.hasErrors('Usuario.Password')}" th:errors="*{Usuario.Password}"></span>
                                     <span id="PasswordError" class="text-danger"></span>

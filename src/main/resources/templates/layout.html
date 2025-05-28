@@ -29,10 +29,10 @@
                         <a class="nav-link" aria-current="page" th:href="@{/usuario}">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/usuario/CargaMasiva}" sec:authorize="hasAnyRole('ROLE_PROGRAMADOR', 'ROLE_ADMIN')">Carga Masiva</a>
+                        <a class="nav-link" th:href="@{/usuario/CargaMasiva}" sec:authorize="hasAnyAuthority('Sistemas', 'Administrador')">Carga Masiva</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/usuario/Form/0}" sec:authorize="hasRole('ROLE_PROGRAMADOR')">Agregar</a>
+                        <a class="nav-link" th:href="@{/usuario/Form/0}" sec:authorize="hasAuthority('Sistemas')">Agregar</a>
                     </li>
                 </ul>
                 

@@ -13,14 +13,14 @@
                     <center>
                         <img class="card-img-top mb-3 my-3" th:src="${listaUsuario.Usuario.Imagen != null} ? 'data:image/png;base64,' + ${listaUsuario.Usuario.Imagen} : 'https://i.postimg.cc/7YH05GSc/Default-Image.png'"  alt="Imagen del perfil" style="width:280px; height:280px">
                         <div class="my-4">
-                            <a th:href="@{/usuario/FormView(IdUsuario = ${listaUsuario.Usuario.IdUsuario}, IdDireccion = -1)}" class="btn btn-warning mb-3 col-5" sec:authorize="hasRole('ROLE_PROGRAMADOR')">Editar Usuario</a>
+                            <a th:href="@{/usuario/FormView(IdUsuario = ${listaUsuario.Usuario.IdUsuario}, IdDireccion = -1)}" class="btn btn-warning mb-3 col-5" sec:authorize="hasAuthority('Sistemas')">Editar Usuario</a>
                             <a th:href="@{/usuario}" class="btn btn-danger mb-3 col-5">Regresar</a>
                         </div>
                     </center>
                 </div>
 
                 <div class="card col-8" style="background-color: #272838;">
-                    <h2 class="text-center">Informacion del perfil</h2>
+                    <h2 class="text-center">Información del perfil</h2>
                     <div class="my-4">
                         <p th:utext="'<strong>Nombre Completo: </strong>' + |${listaUsuario.Usuario.Nombre} ${listaUsuario.Usuario.ApellidoPaterno} ${listaUsuario.Usuario.ApellidoMaterno}|"></p>
                         <p th:utext="'<strong>Username: </strong>' + ${listaUsuario.Usuario.UserName}">Username</p>
@@ -37,7 +37,7 @@
             <div class="row justify-content-center mb-5">
                 <div class="card col-12" style="background-color: #272838;">
                     <h2 class="text-center my-3">Direcciones</h2>
-                    <a th:href="@{/usuario/FormView(IdUsuario = ${listaUsuario.Usuario.IdUsuario}, IdDireccion = 0)}" class="btn btn-primary mb-3" sec:authorize="hasRole('ROLE_PROGRAMADOR')">Agregar direccion</a>
+                    <a th:href="@{/usuario/FormView(IdUsuario = ${listaUsuario.Usuario.IdUsuario}, IdDireccion = 0)}" class="btn btn-primary mb-3" sec:authorize="hasAuthority('Sistemas')">Agregar direccion</a>
                     <table class="table table-dark table-bordered table-sm my-4 mb-5">
                         <thead>
                             <tr>
@@ -49,8 +49,8 @@
                                 <th>Municipio</th>
                                 <th>Estado</th>
                                 <th>Pais</th>
-                                <th sec:authorize="hasRole('ROLE_PROGRAMADOR')">Editar</th>
-                                <th sec:authorize="hasRole('ROLE_PROGRAMADOR')">Eliminar</th>
+                                <th sec:authorize="hasAuthority('Sistemas')">Editar</th>
+                                <th sec:authorize="hasAuthority('Sistemas')">Eliminar</th>
                             </tr>
 
                             <tr th:each="direcciones : ${listaUsuario.Direcciones}">
@@ -62,8 +62,8 @@
                                 <td th:text="${direcciones.Colonia.Municipio.Nombre}"></td>
                                 <td th:text="${direcciones.Colonia.Municipio.Estado.Nombre}"></td>
                                 <td th:text="${direcciones.Colonia.Municipio.Estado.Pais.Nombre}"></td>
-                                <td scope="row" sec:authorize="hasRole('ROLE_PROGRAMADOR')"><div class="d-grid gap-2"><a class="btn btn-secondary" th:href="@{/usuario/FormView(IdUsuario = ${listaUsuario.Usuario.IdUsuario}, IdDireccion = ${direcciones.IdDireccion})}"><i class="bi bi-pencil"></i></a></div></td>
-                                <td scope="row" sec:authorize="hasRole('ROLE_PROGRAMADOR')"><div class="d-grid gap-2"><a class="btn btn-danger" th:href="@{/usuario/DeleteDireccion(IdDireccion = ${direcciones.IdDireccion})}"><i class="bi bi-trash3"></i></a></div></td>
+                                <td scope="row" sec:authorize="hasAuthority('Sistemas')"><div class="d-grid gap-2"><a class="btn btn-secondary" th:href="@{/usuario/FormView(IdUsuario = ${listaUsuario.Usuario.IdUsuario}, IdDireccion = ${direcciones.IdDireccion})}"><i class="bi bi-pencil"></i></a></div></td>
+                                <td scope="row" sec:authorize="hasAuthority('Sistemas')"><div class="d-grid gap-2"><a class="btn btn-danger" th:href="@{/usuario/DeleteDireccion(IdDireccion = ${direcciones.IdDireccion})}"><i class="bi bi-trash3"></i></a></div></td>
                             </tr>
                         </thead>
                     </table>
