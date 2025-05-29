@@ -844,7 +844,7 @@ public class UsuarioDAOImplementation implements IUsuarioDAO {
             }
 
             if (usuario.Rol.getIdRol() != 0) {
-                queryBusqueda.setParameter("Idrol", usuario.Rol.getIdRol());
+                queryBusqueda.setParameter("IdRol", usuario.Rol.getIdRol());
             }
 
             List<com.digis01JEnriquezProgramacionNCapas.JPA.Usuario> listaUsuarios = queryBusqueda.getResultList();

@@ -3,6 +3,7 @@ package com.digis01JEnriquezProgramacionNCapas.Configuration;
 import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -45,17 +46,15 @@ public class SpringSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         
         httpSecurity.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/usuario/CargaMasiva/**")
-                .hasAnyAuthority("Administrador", "Sistemas")
-                
-                .requestMatchers("/usuario/GetAllDinamico")
-                .hasAnyAuthority("Cliente", "Administrador", "Sistemas")
-                
-                .requestMatchers("/usuario/Form/**")
-                .hasAnyAuthority("Cliente", "Sistemas")
                 
                 .requestMatchers("/usuario")
-                .hasAnyAuthority("Administrador", "Cliente", "Sistemas")
+                .hasAnyAuthority("Sistemas", "Administrador", "Cliente")
+                
+                .requestMatchers("/usuario/CargaMasiva")
+                .hasAnyAuthority("Sistemas", "Administrador")
+                
+                .requestMatchers(HttpMethod.GET, "/usuario/**")
+                .hasAnyAuthority("Sistemas", "Administrador")
                 
                 .requestMatchers("/usuario/**")
                 .hasAuthority("Sistemas")
