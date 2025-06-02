@@ -150,15 +150,14 @@ public class JUnitTestMockitoUsuario {
         direccion.Colonia.setIdColonia(5);
         
         
-        Result result = usuarioDAOImplementation.GetAllJPA();
         
-        TypedQuery<Usuario> queryUsuarios = Mockito.mock(TypedQuery.class);
+        TypedQuery<com.digis01JEnriquezProgramacionNCapas.JPA.Usuario> queryUsuarios = Mockito.mock(TypedQuery.class);
         
-        Mockito.when(entityManager.createQuery("SELECT u FROM Usuario u ORDER BY u.IdUsuario ASC", Usuario.class)).thenReturn(queryUsuarios);
+        Mockito.when(entityManager.createQuery("SELECT u FROM Usuario u ORDER BY u.IdUsuario ASC", com.digis01JEnriquezProgramacionNCapas.JPA.Usuario.class)).thenReturn(queryUsuarios);
         
-        List<Usuario> usuarios = new ArrayList<>();
+        List<com.digis01JEnriquezProgramacionNCapas.JPA.Usuario> usuarios = new ArrayList<>();
         
-        usuarios.add(usuario);
+//        usuarios.add();
         
         Mockito.when(queryUsuarios.getResultList()).thenReturn(usuarios);
         
@@ -167,11 +166,13 @@ public class JUnitTestMockitoUsuario {
         TypedQuery<com.digis01JEnriquezProgramacionNCapas.JPA.Direccion> queryDireccion = Mockito.mock(TypedQuery.class);
         
         Mockito.when(entityManager.createQuery("FROM Direccion WHERE Usuario.IdUsuario = :idusuario", com.digis01JEnriquezProgramacionNCapas.JPA.Direccion.class)).thenReturn(queryDireccion);
+        Mockito.when(queryDireccion.setParameter(Mockito.eq("idusuario"), Mockito.anyInt())).thenReturn(queryDireccion);
         
         List<com.digis01JEnriquezProgramacionNCapas.JPA.Direccion> direcciones = new ArrayList<>();
         
         Mockito.when(queryDireccion.getResultList()).thenReturn(direcciones);
         
+        Result result = usuarioDAOImplementation.GetAllJPA();
         
         //Verificar
         Mockito.verify(entityManager, Mockito.times(1)).createQuery("SELECT u FROM Usuario u ORDER BY u.IdUsuario ASC", com.digis01JEnriquezProgramacionNCapas.JPA.Usuario.class);
