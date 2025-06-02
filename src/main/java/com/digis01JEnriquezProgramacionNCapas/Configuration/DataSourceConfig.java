@@ -13,8 +13,8 @@ public class DataSourceConfig {
     public DataSource dataSource(){
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("oracle.jdbc.OracleDriver");
-        dataSource.setUrl("jdbc:oracle:thin:@localhost:1521:XE"); //ORCL QUITAR XE
-        dataSource.setUsername("JEnriquezProgramacionNCapasCrud"); //Quitar CRUD
+        dataSource.setUrl("jdbc:oracle:thin:@localhost:1521:ORCL"); //ORCL QUITAR XE
+        dataSource.setUsername("JEnriquezProgramacionNCapas"); //Quitar CRUD
         dataSource.setPassword("password1");
         
         return dataSource;
