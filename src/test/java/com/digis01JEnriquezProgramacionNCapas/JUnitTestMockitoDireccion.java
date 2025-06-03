@@ -41,8 +41,8 @@ public class JUnitTestMockitoDireccion {
         
         Assertions.assertNotNull(result, "Result viene null");
         Assertions.assertTrue(result.correct, "result.correct viene false");
-        Assertions.assertNotNull(result.object, "result.object contiene datos");
-        Assertions.assertNull(result.objects, "result.objects viene null");
+        Assertions.assertNotNull(result.object, "result.object viene null");
+        Assertions.assertNull(result.objects, "result.objects contiene datos");
         Assertions.assertNull(result.ex, "result.ex contiene una excepción");
         Assertions.assertNull(result.errorMessage, "result.errorMessage contiene un mensaje de error");
     }
