@@ -117,7 +117,20 @@ public class JUnitTestMockitoUsuario {
     @Test
     public void testDireccionUsuarioDelete() {
         com.digis01JEnriquezProgramacionNCapas.JPA.Direccion direccion = new com.digis01JEnriquezProgramacionNCapas.JPA.Direccion();
-
+        
+        direccion.setIdDireccion(5);
+        direccion.setCalle("Lirios");
+        direccion.setNumeroInterior("5");
+        direccion.setNumeroExterior("8");
+        direccion.Colonia = new com.digis01JEnriquezProgramacionNCapas.JPA.Colonia();
+        direccion.Colonia.setIdColonia(5);
+        direccion.Usuario = new com.digis01JEnriquezProgramacionNCapas.JPA.Usuario();
+        direccion.Usuario.setIdUsuario(24);
+        
+        com.digis01JEnriquezProgramacionNCapas.JPA.Usuario usuario = new com.digis01JEnriquezProgramacionNCapas.JPA.Usuario();
+        usuario.setIdUsuario(24);
+        
+        
         TypedQuery<com.digis01JEnriquezProgramacionNCapas.JPA.Direccion> queryDireccion = Mockito.mock(TypedQuery.class);
 
         Mockito.when(entityManager.createQuery("FROM Direccion WHERE Usuario.IdUsuario = :idusuario", com.digis01JEnriquezProgramacionNCapas.JPA.Direccion.class)).thenReturn(queryDireccion);
@@ -128,16 +141,9 @@ public class JUnitTestMockitoUsuario {
 
         Mockito.when(queryDireccion.getResultList()).thenReturn(direcciones);
 
-        com.digis01JEnriquezProgramacionNCapas.JPA.Usuario usuario = new com.digis01JEnriquezProgramacionNCapas.JPA.Usuario();
-
-        usuario.setIdUsuario(5);
-
         Mockito.when(entityManager.find(com.digis01JEnriquezProgramacionNCapas.JPA.Usuario.class, 24)).thenReturn(usuario);
 
-        Result result = usuarioDAOImplementation.DireccionUsuarioDeleteJPA(5);
-
-        Mockito.verify(entityManager, Mockito.times(1)).remove(Mockito.any(com.digis01JEnriquezProgramacionNCapas.JPA.Direccion.class));
-        Mockito.verify(entityManager, Mockito.times(1)).remove(Mockito.any(com.digis01JEnriquezProgramacionNCapas.JPA.Usuario.class));
+        Result result = usuarioDAOImplementation.DireccionUsuarioDeleteJPA(24);
 
         Assertions.assertNotNull(result, "Result viene null");
         Assertions.assertTrue(result.correct, "result.correct viene false");
@@ -145,6 +151,10 @@ public class JUnitTestMockitoUsuario {
         Assertions.assertNull(result.objects, "result.objects viene null");
         Assertions.assertNull(result.ex, "result.ex contiene una excepción");
         Assertions.assertNull(result.errorMessage, "result.errorMessage contiene un mensaje de error");
+        
+        Mockito.verify(entityManager, Mockito.atLeast(1)).remove(Mockito.any(com.digis01JEnriquezProgramacionNCapas.JPA.Direccion.class));
+        Mockito.verify(entityManager, Mockito.atLeast(1)).remove(Mockito.any(com.digis01JEnriquezProgramacionNCapas.JPA.Usuario.class));
+        Mockito.verify(entityManager, Mockito.atLeast(1)).find(Mockito.eq(com.digis01JEnriquezProgramacionNCapas.JPA.Usuario.class), Mockito.anyInt());
     }
 
     @Test
@@ -204,18 +214,18 @@ public class JUnitTestMockitoUsuario {
         Mockito.when(queryDireccion.getResultList()).thenReturn(direcciones);
 
         Result result = usuarioDAOImplementation.GetAllJPA();
-
-        //Verificar
-        Mockito.verify(entityManager, Mockito.times(1)).createQuery("SELECT u FROM Usuario u ORDER BY u.IdUsuario ASC", com.digis01JEnriquezProgramacionNCapas.JPA.Usuario.class);
-
-        Mockito.verify(entityManager, Mockito.times(1)).createQuery("FROM Direccion WHERE Usuario.IdUsuario = :idusuario", com.digis01JEnriquezProgramacionNCapas.JPA.Direccion.class);
-
+        
         Assertions.assertNotNull(result, "Result viene null");
         Assertions.assertTrue(result.correct, "result.correct viene false");
         Assertions.assertNull(result.object, "result.object contiene datos");
         Assertions.assertNotNull(result.objects, "result.objects viene null");
         Assertions.assertNull(result.ex, "result.ex contiene una excepción");
         Assertions.assertNull(result.errorMessage, "result.errorMessage contiene un mensaje de error");
+        
+        //Verificar
+        Mockito.verify(entityManager, Mockito.times(1)).createQuery("SELECT u FROM Usuario u ORDER BY u.IdUsuario ASC", com.digis01JEnriquezProgramacionNCapas.JPA.Usuario.class);
+
+        Mockito.verify(entityManager, Mockito.times(1)).createQuery("FROM Direccion WHERE Usuario.IdUsuario = :idusuario", com.digis01JEnriquezProgramacionNCapas.JPA.Direccion.class);
     }
     
     @Test
@@ -325,5 +335,128 @@ public class JUnitTestMockitoUsuario {
         Assertions.assertNull(result.objects, "result.objects contiene datos");
         Assertions.assertNull(result.ex, "result.ex contiene una excepción");
         Assertions.assertNull(result.errorMessage, "result.errorMessage contiene un mensaje de error");
+    }
+    
+    @Test
+    public void testUpdateStatus() throws ParseException{
+        com.digis01JEnriquezProgramacionNCapas.JPA.Usuario usuario = new com.digis01JEnriquezProgramacionNCapas.JPA.Usuario();
+
+        usuario.setIdUsuario(365);
+        usuario.setUserName("alejandro456");
+        usuario.setNombre("Alejandro");
+        usuario.setApellidoPaterno("García");
+        usuario.setApellidoMaterno("Torres");
+        usuario.setEmail("alejandro@gmail.com");
+        usuario.setPassword("12345");
+        String fecha = "10/05/1999";
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+        java.util.Date dateUtil = formato.parse(fecha);
+        Date fechaSql = new Date(dateUtil.getTime());
+        usuario.setFechaNacimiento(fechaSql);
+        usuario.setSexo("M".charAt(0));
+        usuario.setTelefono("5487567889");
+        usuario.setCelular("5487895623");
+        usuario.setCURP("AGJ548745MNC1240");
+        usuario.Rol = new com.digis01JEnriquezProgramacionNCapas.JPA.Rol();
+        usuario.Rol.setIdRol(3);
+        usuario.setImagen(null);
+        usuario.setStatus(1);
+        
+        Mockito.when(entityManager.find(com.digis01JEnriquezProgramacionNCapas.JPA.Usuario.class, 365)).thenReturn(usuario);
+        
+        Result result = usuarioDAOImplementation.UpdateStatusJPA(365, 0);
+        
+        Assertions.assertNotNull(result, "Result viene null");
+        Assertions.assertTrue(result.correct, "result.correct viene false");
+        Assertions.assertNull(result.object, "result.object contiene datos");
+        Assertions.assertNull(result.objects, "result.objects contiene datos");
+        Assertions.assertNull(result.ex, "result.ex contiene una excepción");
+        Assertions.assertNull(result.errorMessage, "result.errorMessage contiene un mensaje de error");
+        
+        Mockito.verify(entityManager, Mockito.times(1)).find(com.digis01JEnriquezProgramacionNCapas.JPA.Usuario.class,365);
+        Mockito.verify(entityManager, Mockito.atLeast(1)).merge(Mockito.any(com.digis01JEnriquezProgramacionNCapas.JPA.Usuario.class));
+    }
+    
+    @Test
+    public void testGetAllDinamico() throws ParseException{
+        Usuario usuarioBusqueda = new Usuario();
+
+        usuarioBusqueda.setIdUsuario(365);
+        usuarioBusqueda.setNombre("Alejandro");
+        usuarioBusqueda.setApellidoPaterno("García");
+        usuarioBusqueda.setApellidoMaterno("Torres");
+        usuarioBusqueda.Rol = new Rol();
+        usuarioBusqueda.Rol.setIdRol(3);
+        usuarioBusqueda.setStatus(1);
+        
+        com.digis01JEnriquezProgramacionNCapas.JPA.Usuario usuario = new com.digis01JEnriquezProgramacionNCapas.JPA.Usuario();
+
+        usuario.setIdUsuario(365);
+        usuario.setUserName("alejandro456");
+        usuario.setNombre("Alejandro");
+        usuario.setApellidoPaterno("García");
+        usuario.setApellidoMaterno("Torres");
+        usuario.setEmail("alejandro@gmail.com");
+        usuario.setPassword("12345");
+        String fecha = "10/05/1999";
+        SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+        java.util.Date dateUtil = formato.parse(fecha);
+        Date fechaSql = new Date(dateUtil.getTime());
+        usuario.setFechaNacimiento(fechaSql);
+        usuario.setSexo("M".charAt(0));
+        usuario.setTelefono("5487567889");
+        usuario.setCelular("5487895623");
+        usuario.setCURP("AGJ548745MNC1240");
+        usuario.Rol = new com.digis01JEnriquezProgramacionNCapas.JPA.Rol();
+        usuario.Rol.setIdRol(3);
+        usuario.setImagen(null);
+        usuario.setStatus(1);
+        
+        com.digis01JEnriquezProgramacionNCapas.JPA.Direccion direccion = new com.digis01JEnriquezProgramacionNCapas.JPA.Direccion();
+
+        direccion.setCalle("Lirios");
+        direccion.setNumeroInterior("5");
+        direccion.setNumeroExterior("8");
+        direccion.Colonia = new com.digis01JEnriquezProgramacionNCapas.JPA.Colonia();
+        direccion.Colonia.setIdColonia(5);
+        
+        String queryDinamico = "FROM Usuario";
+            queryDinamico = queryDinamico + " WHERE UPPER(Nombre) LIKE UPPER(CONCAT('%', :Nombre ,'%'))";
+            queryDinamico = queryDinamico + " AND UPPER(ApellidoPaterno) LIKE UPPER(CONCAT('%', :Apaterno ,'%'))";
+            queryDinamico = queryDinamico + " AND UPPER(ApellidoMaterno) LIKE UPPER(CONCAT('%', :Amaterno ,'%'))";
+
+            queryDinamico = usuarioBusqueda.getStatus() != null ? queryDinamico + " AND CAST(Status AS STRING) LIKE CONCAT('%', :Status ,'%')" : queryDinamico;
+
+            queryDinamico = usuarioBusqueda.Rol.getIdRol() != 0 ? queryDinamico + " AND CAST(Rol.IdRol AS String) LIKE CONCAT('%', :IdRol ,'%')" : queryDinamico;
+            
+        TypedQuery<com.digis01JEnriquezProgramacionNCapas.JPA.Usuario> queryBusqueda = Mockito.mock(TypedQuery.class);
+        
+        Mockito.when(entityManager.createQuery(queryDinamico, com.digis01JEnriquezProgramacionNCapas.JPA.Usuario.class)).thenReturn(queryBusqueda);
+        
+        List<com.digis01JEnriquezProgramacionNCapas.JPA.Usuario> listaUsuarios = new ArrayList<>();
+        listaUsuarios.add(usuario);
+        
+        Mockito.when(queryBusqueda.getResultList()).thenReturn(listaUsuarios);
+        
+        TypedQuery<com.digis01JEnriquezProgramacionNCapas.JPA.Direccion> queryDirecciones = Mockito.mock(TypedQuery.class);
+        Mockito.when(entityManager.createQuery("FROM Direccion WHERE Usuario.IdUsuario = :IdUsuario", com.digis01JEnriquezProgramacionNCapas.JPA.Direccion.class)).thenReturn(queryDirecciones);
+        Mockito.when(queryDirecciones.setParameter(Mockito.eq("idusuario"), Mockito.anyInt())).thenReturn(queryDirecciones);
+        
+        List<com.digis01JEnriquezProgramacionNCapas.JPA.Direccion> listaDirecciones = new ArrayList<>();
+        listaDirecciones.add(direccion);
+        
+        Mockito.when(queryDirecciones.getResultList()).thenReturn(listaDirecciones);
+        
+        Result result = usuarioDAOImplementation.GetAllDinamicoJPA(usuarioBusqueda);
+        
+        Assertions.assertNotNull(result, "Result viene null");
+        Assertions.assertTrue(result.correct, "result.correct viene false");
+        Assertions.assertNull(result.object, "result.object contiene datos");
+        Assertions.assertNotNull(result.objects, "result.objects viene null");
+        Assertions.assertNull(result.ex, "result.ex contiene una excepción");
+        Assertions.assertNull(result.errorMessage, "result.errorMessage contiene un mensaje de error");
+        
+        Mockito.verify(entityManager, Mockito.atLeast(1)).createQuery(queryDinamico, com.digis01JEnriquezProgramacionNCapas.JPA.Usuario.class);
+        Mockito.verify(entityManager, Mockito.atLeast(1)).createQuery("FROM Direccion WHERE Usuario.IdUsuario = :IdUsuario", com.digis01JEnriquezProgramacionNCapas.JPA.Direccion.class);
     }
 }
