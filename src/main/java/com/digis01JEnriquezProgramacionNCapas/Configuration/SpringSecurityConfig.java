@@ -18,7 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
-    
+
 //    @Bean
 //    public UserDetailsService userDetailService() throws Exception {
 //        UserDetails programador = User.builder()
@@ -41,49 +41,55 @@ public class SpringSecurityConfig {
 //        
 //        return new InMemoryUserDetailsManager(programador, administrador, analista);
 //    }
-    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        
+
         httpSecurity.authorizeHttpRequests(auth -> auth
-                
+                .requestMatchers("/logout")
+                .hasAnyAuthority("Sistemas", "Administrador", "Cliente")
+                .requestMatchers("/error")
+                .hasAnyAuthority("Sistemas", "Administrador", "Cliente")
                 .requestMatchers("/usuario")
                 .hasAnyAuthority("Sistemas", "Administrador", "Cliente")
-                
                 .requestMatchers("/usuario/CargaMasiva")
                 .hasAnyAuthority("Sistemas", "Administrador")
-                
                 .requestMatchers(HttpMethod.GET, "/usuario/**")
                 .hasAnyAuthority("Sistemas", "Administrador")
-                
                 .requestMatchers("/usuario/**")
                 .hasAuthority("Sistemas")
-                
         )
                 .formLogin(login -> {
-                    login.loginProcessingUrl("/login")
+                    login
+                            .loginPage("/login")
+                            .loginProcessingUrl("/authenticateTheUser")
                             .permitAll()
                             .defaultSuccessUrl("/usuario", true);
                 })
                 .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout"));
-
+                .logoutSuccessUrl("/login?logout")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll(true))
+                .exceptionHandling(exceptionHandling
+                        -> exceptionHandling
+                        .accessDeniedPage("/error"));
+        
         return httpSecurity.build();
     }
-    
+
     @Bean
-    public UserDetailsService jdbcUserDetails(DataSource dataSource){
+    public UserDetailsService jdbcUserDetails(DataSource dataSource) {
         JdbcUserDetailsManager manager = new JdbcUserDetailsManager();
         manager.setDataSource(dataSource);
         manager.setUsersByUsernameQuery("select Username, Password, Status from Usuario where Username = ?");
         manager.setAuthoritiesByUsernameQuery("select Username, NombreRol from RolManager where Username = ?");
-        
+
         return manager;
     }
-    
+
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
